@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F0F11" media="(prefers-color-scheme: dark)">
+<script>
+/* v1.1 theme: follow the OS by default; ?theme= or a saved choice ('sc-theme') sets data-theme on <html>. */
+(function(){try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('sc-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+function scToggleTheme(){var d=document.documentElement,c=d.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),n=c==='dark'?'light':'dark';d.setAttribute('data-theme',n);try{localStorage.setItem('sc-theme',n)}catch(e){}}
+</script>
+<link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+
+<title>ScamCheck GH — Presentation board</title>
+<style>
+  body{background:#F4F4F5}
+  .phone{width:340px;border-radius:40px;padding:10px;background:#18181B;box-shadow:0 30px 60px -20px rgba(9,9,11,.45),0 0 0 1px rgba(9,9,11,.2)}
+  .phone--dark{background:#3F3F46}
+  .rowlabel{display:flex;align-items:center;gap:10px;margin:0 0 18px}
+  .phone img{display:block;width:320px;border-radius:30px}
+  .sw{border-radius:16px;height:96px;padding:12px;display:flex;flex-direction:column;justify-content:flex-end;font-weight:700;font-size:13px}
+</style>
+</head>
+<body>
+<div style="width:2400px;height:2580px;position:relative;overflow:hidden">
+  <div style="display:grid;grid-template-columns:560px minmax(0,1fr);gap:64px;padding:80px 80px 0">
+    <div>
+      <img src="assets/logo/lockup-light.svg" alt="ScamCheck GH" style="height:64px">
+      <p class="t-display" style="font-size:56px;margin-top:40px">Check before<br>you send.</p>
+      <p class="t-body-lg t-muted" style="margin-top:20px;font-size:22px;line-height:1.5">A warm, plain-spoken scam checker for Ghana’s mobile-money users. NVIDIA Nemotron reads the message, Tavily finds the proof, and you get a clear answer with what to do now.</p>
+      <p class="t-overline t-muted" style="margin-top:44px">Palette</p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px">
+        <div class="sw" style="background:#1B2559;color:#fff">Adinkra ink<br><span class="t-mono">#1B2559</span></div>
+        <div class="sw" style="background:#F0AE2E;color:#11183B">Kente gold<br><span class="t-mono">#F0AE2E</span></div>
+        <div class="sw" style="background:#FAFAFA;color:#18181B;box-shadow:inset 0 0 0 1px #E4E4E7">Light bg<br><span class="t-mono">#FAFAFA</span></div>
+        <div class="sw" style="background:#0F0F11;color:#FAFAFA">Dark bg<br><span class="t-mono">#0F0F11</span></div>
+        <div class="sw" style="background:#B8301B;color:#fff">Scam<br><span class="t-mono">#B8301B</span></div>
+        <div class="sw" style="background:#A85605;color:#fff">Suspicious<br><span class="t-mono">#A85605</span></div>
+        <div class="sw" style="background:#167D4A;color:#fff">Looks OK<br><span class="t-mono">#167D4A</span></div>
+        <div class="sw" style="background:#fff;color:#18181B;box-shadow:inset 0 0 0 1px #E4E4E7">All text pairs<br>AA, both modes</div>
+      </div>
+      <p class="t-overline t-muted" style="margin-top:40px">Type</p>
+      <div class="card" style="margin-top:12px;padding:20px 24px">
+        <p class="t-h1" style="font-size:40px">Bricolage Grotesque</p>
+        <p class="t-small t-muted">Display · 800 / 700 · warm, characterful headings</p>
+        <div class="divider" style="margin:14px 0"></div>
+        <p style="font-size:24px;font-weight:700">Atkinson Hyperlegible</p>
+        <p class="t-small t-muted">Body · 17–19 px · built for low vision: 0 vs O, 1 vs l</p>
+        <div class="divider" style="margin:14px 0"></div>
+        <p class="t-mono" style="font-size:18px">JetBrains Mono · 1.2 s</p>
+        <p class="t-small t-muted">Model IDs and latency only</p>
+      </div>
+      <div style="display:flex;gap:20px;align-items:center;margin-top:36px">
+        <img src="assets/logo/app-icon-rounded.svg" style="width:112px;height:112px;border-radius:26px;box-shadow:0 12px 24px -10px rgba(17,24,59,.5)" alt="">
+        <img src="assets/logo/app-icon-rounded.svg" style="width:56px;height:56px" alt="">
+        <img src="assets/logo/mark.svg" style="width:32px;height:32px" alt="">
+        <img src="assets/logo/favicon.svg" style="width:24px;height:24px" alt="">
+        <span class="t-small t-muted">Mark: a message bubble with a kente-weave band and a check.</span>
+      </div>
+      <div style="margin-top:36px"><div class="card" style="padding:24px">
+          <p class="t-overline t-muted">Design principles</p>
+          <ul class="grid gap-4" style="margin-top:14px">
+            <li class="flex gap-3"><span class="onb-num">1</span><span><strong>Input first.</strong> Paste box above the fold; one-tap examples for the instant aha.</span></li>
+            <li class="flex gap-3"><span class="onb-num">2</span><span><strong>Never colour alone.</strong> Shape + icon + word + colour on every verdict.</span></li>
+            <li class="flex gap-3"><span class="onb-num">3</span><span><strong>Readable by all.</strong> 17–19 px body, short sentences, 48 px+ taps, AA contrast.</span></li>
+            <li class="flex gap-3"><span class="onb-num">4</span><span><strong>Open AI.</strong> Every model and tool named, timed, and cited.</span></li>
+            <li class="flex gap-3"><span class="onb-num">5</span><span><strong>Safe actions.</strong> Official numbers from a checked list, never generated.</span></li>
+          </ul>
+        </div>
+      </div>
+      <p class="t-overline t-muted" style="margin-top:40px">Modes · neutral zinc, brand as accent only</p>
+      <div style="display:grid;gap:12px;margin-top:12px"><div style="background:#FAFAFA;border-radius:16px;padding:14px;box-shadow:inset 0 0 0 1px #E4E4E7"><p style="color:#18181B;font-weight:700;font-size:14px;margin:0 0 10px">Light · follows system</p><div style="display:flex;gap:8px"><div style="flex:1;height:64px;border-radius:12px;background:#FAFAFA;box-shadow:inset 0 0 0 1px #E4E4E7;display:flex;align-items:flex-end;padding:8px 10px;color:#18181B;font-size:12px;font-weight:700;line-height:1.2">bg<br>#FAFAFA</div><div style="flex:1;height:64px;border-radius:12px;background:#FFFFFF;box-shadow:inset 0 0 0 1px #E4E4E7;display:flex;align-items:flex-end;padding:8px 10px;color:#18181B;font-size:12px;font-weight:700;line-height:1.2">surface<br>#FFFFFF</div><div style="flex:1;height:64px;border-radius:12px;background:#F4F4F5;box-shadow:inset 0 0 0 1px #E4E4E7;display:flex;align-items:flex-end;padding:8px 10px;color:#18181B;font-size:12px;font-weight:700;line-height:1.2">sunken<br>#F4F4F5</div><div style="flex:1;height:64px;border-radius:12px;background:#E4E4E7;box-shadow:inset 0 0 0 1px #E4E4E7;display:flex;align-items:flex-end;padding:8px 10px;color:#18181B;font-size:12px;font-weight:700;line-height:1.2">border<br>#E4E4E7</div></div></div><div style="background:#0F0F11;border-radius:16px;padding:14px;box-shadow:inset 0 0 0 1px #27272A"><p style="color:#FAFAFA;font-weight:700;font-size:14px;margin:0 0 10px">Dark · follows system</p><div style="display:flex;gap:8px"><div style="flex:1;height:64px;border-radius:12px;background:#0F0F11;box-shadow:inset 0 0 0 1px #27272A;display:flex;align-items:flex-end;padding:8px 10px;color:#FAFAFA;font-size:12px;font-weight:700;line-height:1.2">bg<br>#0F0F11</div><div style="flex:1;height:64px;border-radius:12px;background:#18181B;box-shadow:inset 0 0 0 1px #27272A;display:flex;align-items:flex-end;padding:8px 10px;color:#FAFAFA;font-size:12px;font-weight:700;line-height:1.2">surface<br>#18181B</div><div style="flex:1;height:64px;border-radius:12px;background:#1F1F23;box-shadow:inset 0 0 0 1px #27272A;display:flex;align-items:flex-end;padding:8px 10px;color:#FAFAFA;font-size:12px;font-weight:700;line-height:1.2">raised<br>#1F1F23</div><div style="flex:1;height:64px;border-radius:12px;background:#27272A;box-shadow:inset 0 0 0 1px #27272A;display:flex;align-items:flex-end;padding:8px 10px;color:#FAFAFA;font-size:12px;font-weight:700;line-height:1.2">border<br>#27272A</div></div></div></div>
+      <p class="t-small t-muted" style="margin-top:12px">Both follow <span class="t-mono">prefers-color-scheme</span>. The sun/moon toggle sets <span class="t-mono">data-theme</span> on &lt;html&gt; and is remembered.</p>
+    </div>
+    <div>
+      <div style="display:flex;gap:28px;align-items:flex-start">
+        <figure style="margin:0"><div class="phone"><img src="../mockups/01-landing-360x800@2x.png" alt=""></div><figcaption class="t-label" style="margin-top:16px">1 · Paste first</figcaption></figure>
+        <figure style="margin:60px 0 0"><div class="phone"><img src="../mockups/03-analysing-360x800@2x.png" alt=""></div><figcaption class="t-label" style="margin-top:16px">2 · Watch the AI work</figcaption></figure>
+        <figure style="margin:0"><div class="phone"><img src="../mockups/04-result-360x800@2x.png" alt=""></div><figcaption class="t-label" style="margin-top:16px">3 · Clear answer + what to do</figcaption></figure>
+        <figure style="margin:60px 0 0"><div class="phone"><img src="../mockups/05-evidence-360x800@2x.png" alt=""></div><figcaption class="t-label" style="margin-top:16px">4 · Which model did what</figcaption></figure>
+      </div>
+      <p class="rowlabel t-overline t-muted" style="margin-top:44px"><svg class="icon-xs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg> Dark mode · follows the phone’s setting, or the toggle</p>
+      <div style="display:flex;gap:28px;align-items:flex-start">
+        <figure style="margin:0"><div class="phone phone--dark"><img src="../mockups/01-landing-dark-360x800@2x.png" alt=""></div></figure>
+        <figure style="margin:60px 0 0"><div class="phone phone--dark"><img src="../mockups/03-analysing-dark-360x800@2x.png" alt=""></div></figure>
+        <figure style="margin:0"><div class="phone phone--dark"><img src="../mockups/04-result-dark-360x800@2x.png" alt=""></div></figure>
+        <figure style="margin:60px 0 0"><div class="phone phone--dark"><img src="../mockups/05-evidence-dark-360x800@2x.png" alt=""></div></figure>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:40px">
+        <div class="verdict verdict--scam"><div class="kente kente--scam" style="border-radius:0"></div><div class="p-4 flex gap-3 items-center"><span class="verdict-badge !w-12 !h-12"><svg class="icon-lg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m15 9-6 6" /> <path d="M2.586 16.726A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2h6.624a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586z" /> <path d="m9 9 6 6" /> </svg></span><div><p class="t-h2 verdict-word">Scam</p><p class="t-small verdict-text font-bold">Stop. Don’t send.</p></div></div></div>
+        <div class="verdict verdict--suspicious"><div class="kente kente--suspicious" style="border-radius:0"></div><div class="p-4 flex gap-3 items-center"><span class="verdict-badge !w-12 !h-12"><svg class="icon-lg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /> <path d="M12 9v4" /> <path d="M12 17h.01" /> </svg></span><div><p class="t-h2 verdict-word">Suspicious</p><p class="t-small verdict-text font-bold">Be careful. <span class="tw" lang="tw">Hwɛ yie.</span></p></div></div></div>
+        <div class="verdict verdict--ok"><div class="kente kente--ok" style="border-radius:0"></div><div class="p-4 flex gap-3 items-center"><span class="verdict-badge !w-12 !h-12"><svg class="icon-lg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21.801 10A10 10 0 1 1 17 3.335" /> <path d="m9 11 3 3L22 4" /> </svg></span><div><p class="t-h2 verdict-word">Looks OK</p><p class="t-small verdict-text font-bold">Still, never share your PIN.</p></div></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin-top:32px;align-items:start">
+        <figure style="margin:0"><div style="border-radius:18px;overflow:hidden;box-shadow:0 24px 48px -20px rgba(9,9,11,.4),0 0 0 1px rgba(9,9,11,.12)"><div style="height:26px;background:#E4E4E7;display:flex;align-items:center;gap:6px;padding:0 12px"><i style="width:10px;height:10px;border-radius:50%;background:#A1A1AA"></i><i style="width:10px;height:10px;border-radius:50%;background:#A1A1AA"></i><i style="width:10px;height:10px;border-radius:50%;background:#A1A1AA"></i></div><img src="../mockups/landing-desktop-1440x900@2x.png" style="display:block;width:100%" alt=""></div><figcaption class="t-label" style="margin-top:14px">Desktop · light</figcaption></figure>
+        <figure style="margin:0"><div style="border-radius:18px;overflow:hidden;box-shadow:0 24px 48px -20px rgba(9,9,11,.4),0 0 0 1px rgba(9,9,11,.12)"><div style="height:26px;background:#27272A;display:flex;align-items:center;gap:6px;padding:0 12px"><i style="width:10px;height:10px;border-radius:50%;background:#52525B"></i><i style="width:10px;height:10px;border-radius:50%;background:#52525B"></i><i style="width:10px;height:10px;border-radius:50%;background:#52525B"></i></div><img src="../mockups/landing-desktop-dark-1440x900@2x.png" style="display:block;width:100%" alt=""></div><figcaption class="t-label" style="margin-top:14px">Desktop · dark</figcaption></figure>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

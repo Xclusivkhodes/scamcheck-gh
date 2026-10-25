@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F0F11" media="(prefers-color-scheme: dark)">
+<script>
+/* v1.1 theme: follow the OS by default; ?theme= or a saved choice ('sc-theme') sets data-theme on <html>. */
+(function(){try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('sc-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+function scToggleTheme(){var d=document.documentElement,c=d.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),n=c==='dark'?'light':'dark';d.setAttribute('data-theme',n);try{localStorage.setItem('sc-theme',n)}catch(e){}}
+</script>
+<link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+
+<title>ScamCheck GH — Reference screens</title>
+</head>
+<body>
+<div class="max-w-[880px] mx-auto px-6 py-10">
+  <div class="flex items-center justify-between"><img src="assets/logo/lockup-light.svg" alt="ScamCheck GH" class="only-light h-10 w-auto"><img src="assets/logo/lockup-dark.svg" alt="ScamCheck GH" class="only-dark h-10 w-auto"><button type="button" class="theme-toggle" onclick="scToggleTheme()" aria-label="Switch between light and dark mode" title="Light / dark"><svg class="only-light" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg><svg class="only-dark" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></button></div>
+  <h1 class="t-h1 mt-6">Reference screens</h1>
+  <p class="t-muted mt-2">HTML + Tailwind reference implementation built on <code class="t-mono">tokens.css</code> and the shared component layer. Mobile screens are designed at 360 × 800. Sample content is marked EXAMPLE.</p>
+  <div class="divider mt-6"></div>
+  <ol class="grid sm:grid-cols-2 gap-3 mt-6">
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text min-h-tap-comfy" href="landing.html"><span class="onb-num">1</span><span><strong class="block">Landing + onboarding</strong><span class="t-small t-muted">Hero, input above the fold, examples, 3 steps, model roles</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="input.html"><span class="onb-num">2</span><span><strong class="block">Main input</strong><span class="t-small t-muted">Paste / photo / upload, live hints, examples</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="analysing.html"><span class="onb-num">3</span><span><strong class="block">Analysing (live pipeline)</strong><span class="t-small t-muted">Nemotron → Tavily → Nemotron, streaming</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="result.html"><span class="onb-num">4</span><span><strong class="block">Verdict / result</strong><span class="t-small t-muted">Verdict, confidence, what to do now, reasons</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="evidence.html"><span class="onb-num">5</span><span><strong class="block">Evidence · which model did what</strong><span class="t-small t-muted">Timeline, I/O, latency, sources</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="verdicts.html"><span class="onb-num">6</span><span><strong class="block">Verdict system</strong><span class="t-small t-muted">Scam / Suspicious / Looks OK</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="states.html"><span class="onb-num">7</span><span><strong class="block">States</strong><span class="t-small t-muted">Slow, offline, error, empty, low confidence</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="landing-desktop.html"><span class="onb-num">8</span><span><strong class="block">Desktop landing (1440)</strong><span class="t-small t-muted">Two-column hero with live result preview</span></span></a></li>
+  </ol>
+</div>
+</body>
+</html>

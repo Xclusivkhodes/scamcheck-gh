@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>Scam — ScamCheck GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a href="landing.html" class="btn btn-ghost btn-icon -ml-2 text-text" aria-label="Close and check another">{{i:x icon}}</a>
+    <p class="t-label">Your answer</p>
+    <a href="#share" class="btn btn-ghost btn-icon -mr-2 text-text" aria-label="Share">{{i:share-2 icon}}</a>
+  </header>
+  <main class="page-pad pb-10">
+    <!-- Verdict: icon + shape + colour + word, never colour alone -->
+    <section class="verdict verdict--scam" aria-labelledby="v-word" role="status">
+      <div class="kente kente--scam rounded-none" aria-hidden="true"></div>
+      <div class="p-5">
+        <div class="flex items-center gap-4">
+          <span class="verdict-badge">{{i:octagon-x icon-xl}}</span>
+          <div>
+            <p class="t-overline">Verdict <span class="tw normal-case tracking-normal font-normal" lang="tw">· Ɛyɛ nnaadaa</span></p>
+            <h1 id="v-word" class="t-verdict verdict-word">Scam</h1>
+          </div>
+        </div>
+        <p class="t-h3 verdict-text mt-4">Do not send any money back. This is a fake “sent by mistake” trick.</p>
+        <div class="mt-5">
+          <div class="flex items-baseline justify-between t-small"><span class="font-bold verdict-text">How sure we are</span><span class="font-bold">Very sure · 96%</span></div>
+          <div class="meter mt-2" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+        </div>
+        <a href="evidence.html" class="mt-4 flex items-center gap-2 flex-wrap t-small text-text no-underline">
+          <span class="model model--nemotron !bg-surface">Nemotron</span>
+          <span class="model model--tavily !bg-surface">Tavily · 3 sources</span>
+          <span class="ml-auto inline-flex items-center font-bold text-link">How we checked {{i:chevron-right icon-xs}}</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- What to do now -->
+    <section class="mt-6" aria-labelledby="todo-h">
+      <h2 id="todo-h" class="t-h2">What to do now</h2>
+      <ol class="card mt-3 overflow-hidden">
+        <li class="action">
+          <span class="action-num action-num--stop">1</span>
+          <div><p class="action-title">Don’t send money. Don’t share your PIN.</p><p class="t-muted mt-1">If someone really sent money by mistake, their network reverses it. Not you.</p></div>
+        </li>
+        <li class="action">
+          <span class="action-num">2</span>
+          <div><p class="action-title">Check your real balance</p>
+            <a href="tel:*170%23" class="call"><span class="call-icon">{{i:smartphone icon-sm}}</span><span><strong>Dial *170#</strong><span class="sub">MTN MoMo menu. Is the GHS 1,250 really there?</span></span></a>
+          </div>
+        </li>
+        <li class="action">
+          <span class="action-num">3</span>
+          <div><p class="action-title">Report the number</p>
+            <a href="tel:*170%23" class="call"><span class="call-icon">{{i:siren icon-sm}}</span><span><strong>MTN: *170# › 6 › 4</strong><span class="sub">My Wallet › Report fraud</span></span></a>
+            <a href="tel:292" class="call"><span class="call-icon">{{i:phone icon-sm}}</span><span><strong>Call or text 292</strong><span class="sub">Cyber Security Authority, 24 hrs</span></span></a>
+          </div>
+        </li>
+        <li class="action">
+          <span class="action-num">4</span>
+          <div><p class="action-title">Warn your family</p>
+            <a id="share" href="#" class="btn btn-secondary btn-md btn-block mt-2">{{i:share-2 icon-sm}} Share warning on WhatsApp</a>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Why -->
+    <section class="mt-8" aria-labelledby="why-h">
+      <h2 id="why-h" class="t-h2">Why we think so</h2>
+      <div class="card mt-3 px-4">
+        <div class="reason">
+          <span class="reason-icon">{{i:hand-coins icon-sm}}</span>
+          <div><p class="t-label">It asks you to send money back</p>
+            <span class="quote">“Pls I sent it by mistake, <mark class="flag">kindly send it back</mark> to <span class="nowrap">024 555 0123</span>”</span>
+            <p class="t-small t-muted mt-2">A known trick in Ghana. CSA and tech blogs warn about it. <a class="cite" href="evidence.html#s1">1</a> <a class="cite" href="evidence.html#s2">2</a></p></div>
+        </div>
+        <div class="reason">
+          <span class="reason-icon">{{i:message-square-text icon-sm}}</span>
+          <div><p class="t-label">It came from a phone number</p><p class="t-small t-muted mt-1">Real MTN cash-in alerts come from “MobileMoney”, not <span class="nowrap">+233 55 000 4473</span>. <a class="cite" href="evidence.html#s3">3</a></p></div>
+        </div>
+        <div class="reason">
+          <span class="reason-icon reason-icon--warn">{{i:clock icon-sm}}</span>
+          <div><p class="t-label">It plays on kindness and hurry</p><p class="t-small t-muted mt-1">“God bless you” and “Pls” push you to act before you check.</p></div>
+        </div>
+      </div>
+      <a href="evidence.html" class="btn btn-soft btn-md btn-block mt-4">{{i:file-search icon-sm}} See all evidence &amp; AI steps</a>
+    </section>
+
+    <p class="t-small t-muted mt-8">AI can make mistakes. When in doubt, call your network on <strong class="text-text">100</strong> before you send anything.</p>
+    <a href="landing.html" class="btn btn-primary btn-lg btn-block mt-4">Check another message</a>
+  </main>
+</div>
+</body>
+</html>

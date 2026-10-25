@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>States — ScamCheck GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><p class="t-label">States: slow, offline, error, empty</p></header>
+  <main class="page-pad pb-10 grid gap-6">
+    <section aria-label="Slow network">
+      <p class="t-overline t-muted mb-2">Slow network (after 8 s)</p>
+      <div class="banner banner--warn">{{i:clock icon-sm mt-0.5}}<div><strong>Still checking…</strong><p>Your network is slow. Keep this page open. We’ll finish soon.</p></div></div>
+    </section>
+    <section aria-label="Offline">
+      <p class="t-overline t-muted mb-2">Offline</p>
+      <div class="card p-5 text-center">
+        <span class="mx-auto w-14 h-14 rounded-lg bg-surface-sunken grid place-items-center">{{i:wifi-off icon-lg text-text-muted}}</span>
+        <p class="t-h3 mt-3">No internet right now</p>
+        <p class="t-muted mt-1">We saved your message. We’ll check it as soon as you’re back online.</p>
+        <div class="banner banner--info mt-4 text-left">{{i:lock-keyhole icon-sm mt-0.5}}<div><strong>Until then</strong><p>Don’t send money or share your PIN.</p></div></div>
+      </div>
+    </section>
+    <section aria-label="Error">
+      <p class="t-overline t-muted mb-2">Error (model or search failed)</p>
+      <div class="card p-5">
+        <ol class="steps">
+          <li class="step step--done"><span class="step-dot">{{i:check icon-sm}}</span><div><p class="step-title">Reading the message</p></div></li>
+          <li class="step step--error"><span class="step-dot">{{i:x icon-sm}}</span><div><p class="step-title">Web search didn’t answer</p><p class="t-small t-muted mt-1">Tavily took too long. Nothing is wrong with your message.</p></div></li>
+        </ol>
+        <a href="#" class="btn btn-primary btn-md btn-block mt-5">{{i:refresh-cw icon-sm}} Try again</a>
+        <a href="#" class="btn btn-ghost btn-block mt-1">Answer without web search</a>
+      </div>
+    </section>
+    <section aria-label="Empty input">
+      <p class="t-overline t-muted mb-2">Empty / too short</p>
+      <label for="m" class="field-label">The message</label>
+      <textarea id="m" class="textarea input--error !min-h-[88px]" aria-invalid="true" aria-describedby="m-err">Hi</textarea>
+      <p id="m-err" class="field-error">{{i:info icon-sm}} Paste the whole message, not just one word.</p>
+    </section>
+    <section aria-label="Can't decide">
+      <p class="t-overline t-muted mb-2">Low confidence</p>
+      <div class="verdict" role="status">
+        <div class="p-4 flex gap-4 items-start">
+          <span class="verdict-badge !w-12 !h-12" style="background:var(--color-surface-sunken);color:var(--color-text)">{{i:circle-help icon}}</span>
+          <div><p class="t-h3">We’re not sure</p><p class="t-muted mt-1">Treat it as suspicious. Call your network on <strong class="text-text">100</strong> to ask.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

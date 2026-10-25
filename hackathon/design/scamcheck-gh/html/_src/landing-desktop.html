@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>ScamCheck GH — Check a message before you act (desktop)</title>
+</head>
+<body>
+<div class="min-h-screen bg-bg">
+  <header class="max-w-content mx-auto px-10 h-20 flex items-center justify-between">
+    <img src="assets/logo/lockup-light.svg" alt="ScamCheck GH" class="only-light h-9 w-auto"><img src="assets/logo/lockup-dark.svg" alt="ScamCheck GH" class="only-dark h-9 w-auto">
+    <nav class="flex items-center gap-2 t-label" aria-label="Main">
+      <a class="btn btn-ghost text-text" href="#how">How it works</a>
+      <a class="btn btn-ghost text-text" href="#ai">Our AI</a>
+      <a class="btn btn-ghost text-text" href="#report">Report a scam</a>
+      <button type="button" class="theme-toggle ml-3" onclick="scToggleTheme()" aria-label="Switch between light and dark mode" title="Light / dark">{{i:moon only-light}}{{i:sun only-dark}}</button><div class="lang ml-2" role="group" aria-label="Language"><button aria-pressed="true">EN</button><button aria-pressed="false" lang="tw">Twi</button></div>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <div class="max-w-content mx-auto px-10 pt-10 pb-20 grid grid-cols-[1.05fr_.95fr] gap-16 items-center">
+        <div>
+          <p class="chip chip--info">{{i:lock-keyhole icon-xs}} Free · No sign-up · We never ask for your PIN</p>
+          <h1 class="t-display !text-[4rem] !leading-[1.02] mt-6">Strange message?<br><span class="relative inline-block">Check it first.<span class="kente absolute left-0 right-2 -bottom-2" aria-hidden="true"></span></span></h1>
+          <p class="t-body-lg !text-[1.3125rem] t-muted mt-7 max-w-[34ch]">Paste an SMS, WhatsApp or MoMo message. In about 10 seconds you’ll know if it’s a scam, why, and what to do.</p>
+          <form class="card-raised p-5 mt-8 max-w-[600px]" action="input.html">
+            <label for="msg" class="field-label">Paste the message</label>
+            <textarea id="msg" class="textarea !min-h-[96px]" placeholder="Paste the message here (Ctrl + V)"></textarea>
+            <div class="flex gap-3 mt-3">
+              <a href="input.html" class="btn btn-secondary btn-md">{{i:image-up icon-sm}} Upload screenshot</a>
+              <a href="analysing.html" class="btn btn-primary btn-md flex-1">Check message {{i:arrow-right icon}}</a>
+            </div>
+            <div class="flex items-center gap-2 mt-4">
+              <span class="t-small t-muted mr-1 nowrap">Try one:</span>
+              <a href="input.html" class="chip-example chip !min-h-[40px]">{{i:hand-coins icon-xs}} “Sent by mistake”</a>
+              <a href="input.html" class="chip-example chip !min-h-[40px]">{{i:sparkles icon-xs}} Promo prize</a>
+              <a href="input.html" class="chip-example chip !min-h-[40px]">{{i:badge-check icon-xs}} Real MTN alert</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- Product preview -->
+        <div class="relative" aria-label="Example result">
+          <div class="absolute -inset-6 rounded-[44px] bg-neutral-900 border border-border" aria-hidden="true"></div>
+          <div class="relative grid gap-4">
+            <div class="sms shadow-md max-w-[420px]">
+              <p class="sms-meta">{{i:message-square-text icon-xs}} SMS · <span class="nowrap">+233 55 000 4473</span><span class="tag-example ml-auto">EXAMPLE</span></p>
+              <p>Cash In received for GHS 1,250.00 from KWAME MENSAH… Pls I sent it by mistake, <mark class="flag">kindly send it back</mark> to <span class="nowrap">024 555 0123</span>.</p>
+            </div>
+            <section class="verdict verdict--scam shadow-lg ml-10">
+              <div class="kente kente--scam rounded-none" aria-hidden="true"></div>
+              <div class="p-5">
+                <div class="flex items-center gap-4"><span class="verdict-badge">{{i:octagon-x icon-xl}}</span><div><p class="t-overline">Verdict</p><p class="t-verdict verdict-word">Scam</p></div><span class="ml-auto font-bold t-small text-right">Very sure<br><span class="t-h2">96%</span></span></div>
+                <p class="t-h3 verdict-text mt-4">Do not send any money back. This is a fake “sent by mistake” trick.</p>
+                <div class="mt-4 card p-3 !rounded-md">
+                  <div class="split" aria-hidden="true"><span class="split-nemotron" style="flex:1.2"></span><span class="split-tavily" style="flex:2.1"></span><span class="split-nemotron" style="flex:3.1;opacity:.75"></span><span class="split-app" style="flex:.4"></span></div>
+                  <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2"><span class="legend" style="--dot:var(--color-tool-nemotron)">Nemotron read &amp; decided</span><span class="legend" style="--dot:var(--color-tool-tavily)">Tavily found 3 sources</span></div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="max-w-content mx-auto px-10 py-16">
+      <div class="grid grid-cols-3 gap-6">
+        <div class="card p-6"><span class="onb-num">1</span><p class="t-h3 mt-4">Paste it or snap it</p><p class="t-muted mt-2">SMS, WhatsApp, or a MoMo screen. A screenshot works too.</p></div>
+        <div class="card p-6"><span class="onb-num">2</span><p class="t-h3 mt-4">AI checks it for you</p><p class="t-muted mt-2">NVIDIA Nemotron reads it. Tavily searches the web for known scams.</p></div>
+        <div class="card p-6"><span class="onb-num">3</span><p class="t-h3 mt-4">Get a clear answer</p><p class="t-muted mt-2">Scam, Suspicious or Looks OK. With proof, and what to do next.</p></div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

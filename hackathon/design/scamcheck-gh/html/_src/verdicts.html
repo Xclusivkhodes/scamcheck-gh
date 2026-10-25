@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>Verdict system — ScamCheck GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><p class="t-label">Verdicts · icon + shape + word</p><span class="tag-example">EXAMPLES</span></header>
+  <main class="page-pad pb-8 grid gap-4">
+    <section class="verdict verdict--scam" role="status">
+      <div class="kente kente--scam rounded-none" aria-hidden="true"></div>
+      <div class="p-4 flex gap-4 items-start">
+        <span class="verdict-badge !w-14 !h-14">{{i:octagon-x icon-lg}}</span>
+        <div><p class="t-h1 verdict-word">Scam</p><p class="verdict-text font-bold mt-1">Do not send money or your PIN.</p><p class="t-small t-muted mt-1">Fake “sent by mistake” SMS from a phone number.</p></div>
+      </div>
+    </section>
+    <section class="verdict verdict--suspicious" role="status">
+      <div class="kente kente--suspicious rounded-none" aria-hidden="true"></div>
+      <div class="p-4 flex gap-4 items-start">
+        <span class="verdict-badge !w-14 !h-14">{{i:triangle-alert icon-lg}}</span>
+        <div><p class="t-h1 verdict-word">Suspicious</p><p class="verdict-text font-bold mt-1">Don’t click the link yet.</p><p class="t-small t-muted mt-1">“You won GHS 5,000 in the MTN promo” with a short link. MTN has no such promo listed.</p></div>
+      </div>
+    </section>
+    <section class="verdict verdict--ok" role="status">
+      <div class="kente kente--ok rounded-none" aria-hidden="true"></div>
+      <div class="p-4 flex gap-4 items-start">
+        <span class="verdict-badge !w-14 !h-14">{{i:circle-check-big icon-lg}}</span>
+        <div><p class="t-h1 verdict-word">Looks OK</p><p class="verdict-text font-bold mt-1">This looks like a real alert.</p><p class="t-small t-muted mt-1">From “MobileMoney”, no link, no request. Still: never share your PIN.</p></div>
+      </div>
+    </section>
+    <div class="card p-4">
+      <p class="t-label">How to read the shapes</p>
+      <ul class="mt-3 grid gap-3">
+        <li class="flex items-center gap-3"><span class="reason-icon">{{i:octagon-x icon-sm}}</span><span><strong>Stop sign</strong> = Scam. Stop now.</span></li>
+        <li class="flex items-center gap-3"><span class="reason-icon reason-icon--warn">{{i:triangle-alert icon-sm}}</span><span><strong>Triangle</strong> = Suspicious. Be careful. <span class="tw" lang="tw">Hwɛ yie.</span></span></li>
+        <li class="flex items-center gap-3"><span class="reason-icon reason-icon--ok">{{i:circle-check-big icon-sm}}</span><span><strong>Circle tick</strong> = Looks OK. Stay alert.</span></li>
+      </ul>
+    </div>
+  </main>
+</div>
+</body>
+</html>

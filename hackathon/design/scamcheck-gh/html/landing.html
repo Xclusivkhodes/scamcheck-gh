@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F0F11" media="(prefers-color-scheme: dark)">
+<script>
+/* v1.1 theme: follow the OS by default; ?theme= or a saved choice ('sc-theme') sets data-theme on <html>. */
+(function(){try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('sc-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+function scToggleTheme(){var d=document.documentElement,c=d.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),n=c==='dark'?'light':'dark';d.setAttribute('data-theme',n);try{localStorage.setItem('sc-theme',n)}catch(e){}}
+</script>
+<link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+
+<title>ScamCheck GH — Check a message before you act</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+  <a href="landing.html" aria-label="ScamCheck GH home" class="inline-flex items-center min-h-tap"><img src="assets/logo/lockup-light.svg" alt="ScamCheck GH" class="only-light h-[30px] w-auto"><img src="assets/logo/lockup-dark.svg" alt="ScamCheck GH" class="only-dark h-[30px] w-auto"></a>
+  <div class="flex items-center gap-2">
+  <button type="button" class="theme-toggle" onclick="scToggleTheme()" aria-label="Switch between light and dark mode" title="Light / dark"><svg class="only-light" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg><svg class="only-dark" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></button>
+  <div class="lang" role="group" aria-label="Language / Kasa">
+    <button type="button" aria-pressed="true">EN</button>
+    <button type="button" aria-pressed="false" lang="tw">Twi</button>
+  </div>
+  </div>
+</header>
+
+  <main class="pb-10">
+    <section class="page-pad pt-2">
+      <p class="chip chip--info"><svg class="icon-xs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="16" r="1" /> <rect x="3" y="10" width="18" height="12" rx="2" /> <path d="M7 10V7a5 5 0 0 1 10 0v3" /> </svg> Free · We never ask for your PIN</p>
+      <h1 class="t-display !text-[2.125rem] mt-4">Strange message?<br><span class="relative inline-block">Check it first.<span class="kente kente--thin absolute left-0 right-1 -bottom-1.5" aria-hidden="true"></span></span></h1>
+      <p class="t-body-lg t-muted mt-4">Paste an SMS, WhatsApp or MoMo message. In about 10 seconds you'll know if it's a scam.</p>
+    </section>
+
+    <!-- Primary action: above the fold -->
+    <section class="page-pad mt-5" aria-labelledby="check-h">
+      <form class="card-raised p-4" action="input.html">
+        <label id="check-h" class="field-label" for="msg">Paste the message</label>
+        <div class="relative">
+          <textarea id="msg" class="textarea !min-h-[104px] pr-14" placeholder="Long-press here, then tap Paste"></textarea>
+          <button type="button" class="btn btn-soft btn-icon absolute right-2 top-2" aria-label="Paste from clipboard"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 14h10" /> <path d="M16 4h2a2 2 0 0 1 2 2v1.344" /> <path d="m17 18 4-4-4-4" /> <path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 1.793-1.113" /> <rect x="8" y="2" width="8" height="4" rx="1" /> </svg></button>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-3">
+          <a href="input.html" class="btn btn-secondary btn-md"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /> <circle cx="12" cy="13" r="3" /> </svg> Photo</a>
+          <a href="input.html" class="btn btn-secondary btn-md"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21" /> <path d="m14 19.5 3-3 3 3" /> <path d="M17 22v-5.5" /> <circle cx="9" cy="9" r="2" /> </svg> Screenshot</a>
+        </div>
+        <a href="analysing.html" class="btn btn-primary btn-lg btn-block mt-3">Check message <svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /> </svg></a>
+      </form>
+    </section>
+
+    <section class="mt-5" aria-labelledby="ex-h">
+      <h2 id="ex-h" class="page-pad t-label flex items-center gap-2"><svg class="icon-sm text-accent-600" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg> No message? Try one</h2>
+      <div class="scroll-x page-pad mt-2 pb-1">
+        <a href="input.html" class="chip-example chip"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /> <path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /> <path d="m2 16 6 6" /> <circle cx="16" cy="9" r="2.9" /> <circle cx="6" cy="5" r="3" /> </svg> “Sent by mistake”</a>
+        <a href="input.html" class="chip-example chip"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg> Promo prize</a>
+        <a href="input.html" class="chip-example chip"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" /> <path d="m16 9-5.5 5.5L8 12" /> </svg> Real MTN alert</a>
+      </div>
+    </section>
+
+    <!-- Light onboarding: 3 steps -->
+    <section class="page-pad mt-10" aria-labelledby="how-h">
+      <p class="t-overline t-muted">How it works</p>
+      <h2 id="how-h" class="t-h2 mt-1">Three steps. No sign-up.</h2>
+      <ol class="mt-5 grid gap-4">
+        <li class="flex gap-3"><span class="onb-num">1</span><div><p class="t-label">Paste it or snap it</p><p class="t-muted">SMS, WhatsApp, or a MoMo screen. A screenshot works too.</p></div></li>
+        <li class="flex gap-3"><span class="onb-num">2</span><div><p class="t-label">AI checks it for you</p><p class="t-muted">It reads the message and searches the web for known scams.</p></div></li>
+        <li class="flex gap-3"><span class="onb-num">3</span><div><p class="t-label">Get a clear answer</p><p class="t-muted">Scam, Suspicious or Looks OK, with proof and what to do next.</p></div></li>
+      </ol>
+    </section>
+
+    <!-- Which model does what -->
+    <section class="page-pad mt-10" aria-labelledby="who-h">
+      <div class="card p-5">
+        <p class="t-overline t-muted">Open about our AI</p>
+        <h2 id="who-h" class="t-h3 mt-1">Who checks your message</h2>
+        <ul class="mt-4 grid gap-4">
+          <li class="flex gap-3 items-start"><span class="model-avatar model-avatar--nemotron"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 7V5a2 2 0 0 1 2-2h2" /> <path d="M17 3h2a2 2 0 0 1 2 2v2" /> <path d="M21 17v2a2 2 0 0 1-2 2h-2" /> <path d="M7 21H5a2 2 0 0 1-2-2v-2" /> <path d="M7 8h8" /> <path d="M7 12h10" /> <path d="M7 16h6" /> </svg></span><div><p class="t-label">NVIDIA Nemotron reads it</p><p class="t-small t-muted">Pulls out amounts, numbers, links and pressure tricks.</p></div></li>
+          <li class="flex gap-3 items-start"><span class="model-avatar model-avatar--tavily"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /> <path d="M2 12h20" /> </svg></span><div><p class="t-label">Tavily searches the web</p><p class="t-small t-muted">Finds warnings from CSA, networks and news.</p></div></li>
+          <li class="flex gap-3 items-start"><span class="model-avatar model-avatar--nemotron"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 3v18" /> <path d="m19 8 3 8a5 5 0 0 1-6 0zV7" /> <path d="M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1" /> <path d="m5 8 3 8a5 5 0 0 1-6 0zV7" /> <path d="M7 21h10" /> </svg></span><div><p class="t-label">Nemotron weighs the proof</p><p class="t-small t-muted">Gives the answer and shows every source.</p></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Emergency strip -->
+    <section class="page-pad mt-6" aria-labelledby="sos-h">
+      <div class="rounded-xl bg-neutral-900 text-neutral-50 border border-border p-5 overflow-hidden relative">
+        <div class="kente absolute top-0 inset-x-0 rounded-none" aria-hidden="true"></div>
+        <h2 id="sos-h" class="t-h3 mt-2">Already sent money?</h2>
+        <p class="text-neutral-300 mt-1">Act fast. Call your network first, then report it.</p>
+        <a href="tel:292" class="btn btn-accent btn-md btn-block mt-4 !justify-start text-left gap-3"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /> </svg><span><span class="block">Call or text 292</span><span class="block t-small font-normal">Cyber Security Authority, 24 hours</span></span></a>
+      </div>
+    </section>
+
+    <footer class="page-pad mt-8 t-small t-muted">
+      <p>ScamCheck GH gives advice, not a guarantee. If in doubt, call your network on <strong class="text-text">100</strong>.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

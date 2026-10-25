@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ScamCheck GH</string>
+    <string name="explain_title">SMS stays on this phone</string>
+    <string name="explain_body">ScamCheck can read incoming SMS so it can warn you before you reply. The check runs on the phone. The message is sent to your ScamCheck server only if you tap Check with AI. You can say no and still paste a message.</string>
+    <string name="allow_sms">Allow SMS access</string>
+    <string name="not_now">Not now</string>
+    <string name="scan_recent">Scan recent messages</string>
+    <string name="paste_check">Paste a message</string>
+    <string name="settings">Server address</string>
+    <string name="privacy">Privacy notice</string>
+    <string name="check_ai">Check with AI</string>
+    <string name="notification_channel">Scam alerts</string>
+    <string name="sms_denied">SMS access is off. Paste a message, or turn it on later in system settings. On Android 13 and newer, sideloaded apps need Allow restricted settings in App info before the SMS permission can be granted.</string>
+</resources>
