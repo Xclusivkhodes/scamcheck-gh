@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F0F11" media="(prefers-color-scheme: dark)">
+<script>
+/* v1.1 theme: follow the OS by default; ?theme= or a saved choice ('sc-theme') sets data-theme on <html>. */
+(function(){try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('sc-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+function scToggleTheme(){var d=document.documentElement,c=d.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),n=c==='dark'?'light':'dark';d.setAttribute('data-theme',n);try{localStorage.setItem('sc-theme',n)}catch(e){}}
+</script>
+<link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+
+<title>States — ScamCheck GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><p class="t-label">States: slow, offline, error, empty</p></header>
+  <main class="page-pad pb-10 grid gap-6">
+    <section aria-label="Slow network">
+      <p class="t-overline t-muted mb-2">Slow network (after 8 s)</p>
+      <div class="banner banner--warn"><svg class="icon-sm mt-0.5" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="M12 6v6l4 2" /> </svg><div><strong>Still checking…</strong><p>Your network is slow. Keep this page open. We’ll finish soon.</p></div></div>
+    </section>
+    <section aria-label="Offline">
+      <p class="t-overline t-muted mb-2">Offline</p>
+      <div class="card p-5 text-center">
+        <span class="mx-auto w-14 h-14 rounded-lg bg-surface-sunken grid place-items-center"><svg class="icon-lg text-text-muted" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 20h.01" /> <path d="M8.5 16.429a5 5 0 0 1 7 0" /> <path d="M5 12.859a10 10 0 0 1 5.17-2.69" /> <path d="M19 12.859a10 10 0 0 0-2.007-1.523" /> <path d="M2 8.82a15 15 0 0 1 4.177-2.643" /> <path d="M22 8.82a15 15 0 0 0-11.288-3.764" /> <path d="m2 2 20 20" /> </svg></span>
+        <p class="t-h3 mt-3">No internet right now</p>
+        <p class="t-muted mt-1">We saved your message. We’ll check it as soon as you’re back online.</p>
+        <div class="banner banner--info mt-4 text-left"><svg class="icon-sm mt-0.5" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="16" r="1" /> <rect x="3" y="10" width="18" height="12" rx="2" /> <path d="M7 10V7a5 5 0 0 1 10 0v3" /> </svg><div><strong>Until then</strong><p>Don’t send money or share your PIN.</p></div></div>
+      </div>
+    </section>
+    <section aria-label="Error">
+      <p class="t-overline t-muted mb-2">Error (model or search failed)</p>
+      <div class="card p-5">
+        <ol class="steps">
+          <li class="step step--done"><span class="step-dot"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20 6 9 17l-5-5" /> </svg></span><div><p class="step-title">Reading the message</p></div></li>
+          <li class="step step--error"><span class="step-dot"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M18 6 6 18" /> <path d="m6 6 12 12" /> </svg></span><div><p class="step-title">Web search didn’t answer</p><p class="t-small t-muted mt-1">Tavily took too long. Nothing is wrong with your message.</p></div></li>
+        </ol>
+        <a href="#" class="btn btn-primary btn-md btn-block mt-5"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /> <path d="M21 3v5h-5" /> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /> <path d="M8 16H3v5" /> </svg> Try again</a>
+        <a href="#" class="btn btn-ghost btn-block mt-1">Answer without web search</a>
+      </div>
+    </section>
+    <section aria-label="Empty input">
+      <p class="t-overline t-muted mb-2">Empty / too short</p>
+      <label for="m" class="field-label">The message</label>
+      <textarea id="m" class="textarea input--error !min-h-[88px]" aria-invalid="true" aria-describedby="m-err">Hi</textarea>
+      <p id="m-err" class="field-error"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="M12 16v-4" /> <path d="M12 8h.01" /> </svg> Paste the whole message, not just one word.</p>
+    </section>
+    <section aria-label="Can't decide">
+      <p class="t-overline t-muted mb-2">Low confidence</p>
+      <div class="verdict" role="status">
+        <div class="p-4 flex gap-4 items-start">
+          <span class="verdict-badge !w-12 !h-12" style="background:var(--color-surface-sunken);color:var(--color-text)"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /> <path d="M12 17h.01" /> </svg></span>
+          <div><p class="t-h3">We’re not sure</p><p class="t-muted mt-1">Treat it as suspicious. Call your network on <strong class="text-text">100</strong> to ask.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

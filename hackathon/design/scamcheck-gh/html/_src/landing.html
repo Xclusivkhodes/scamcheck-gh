@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>ScamCheck GH — Check a message before you act</title>
+</head>
+<body>
+<div class="app">
+  {{inc:topbar.html}}
+  <main class="pb-10">
+    <section class="page-pad pt-2">
+      <p class="chip chip--info">{{i:lock-keyhole icon-xs}} Free · We never ask for your PIN</p>
+      <h1 class="t-display !text-[2.125rem] mt-4">Strange message?<br><span class="relative inline-block">Check it first.<span class="kente kente--thin absolute left-0 right-1 -bottom-1.5" aria-hidden="true"></span></span></h1>
+      <p class="t-body-lg t-muted mt-4">Paste an SMS, WhatsApp or MoMo message. In about 10 seconds you'll know if it's a scam.</p>
+    </section>
+
+    <!-- Primary action: above the fold -->
+    <section class="page-pad mt-5" aria-labelledby="check-h">
+      <form class="card-raised p-4" action="input.html">
+        <label id="check-h" class="field-label" for="msg">Paste the message</label>
+        <div class="relative">
+          <textarea id="msg" class="textarea !min-h-[104px] pr-14" placeholder="Long-press here, then tap Paste"></textarea>
+          <button type="button" class="btn btn-soft btn-icon absolute right-2 top-2" aria-label="Paste from clipboard">{{i:clipboard-paste icon-sm}}</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-3">
+          <a href="input.html" class="btn btn-secondary btn-md">{{i:camera icon-sm}} Photo</a>
+          <a href="input.html" class="btn btn-secondary btn-md">{{i:image-up icon-sm}} Screenshot</a>
+        </div>
+        <a href="analysing.html" class="btn btn-primary btn-lg btn-block mt-3">Check message {{i:arrow-right icon}}</a>
+      </form>
+    </section>
+
+    <section class="mt-5" aria-labelledby="ex-h">
+      <h2 id="ex-h" class="page-pad t-label flex items-center gap-2">{{i:sparkles icon-sm text-accent-600}} No message? Try one</h2>
+      <div class="scroll-x page-pad mt-2 pb-1">
+        <a href="input.html" class="chip-example chip">{{i:hand-coins icon-sm}} “Sent by mistake”</a>
+        <a href="input.html" class="chip-example chip">{{i:sparkles icon-sm}} Promo prize</a>
+        <a href="input.html" class="chip-example chip">{{i:badge-check icon-sm}} Real MTN alert</a>
+      </div>
+    </section>
+
+    <!-- Light onboarding: 3 steps -->
+    <section class="page-pad mt-10" aria-labelledby="how-h">
+      <p class="t-overline t-muted">How it works</p>
+      <h2 id="how-h" class="t-h2 mt-1">Three steps. No sign-up.</h2>
+      <ol class="mt-5 grid gap-4">
+        <li class="flex gap-3"><span class="onb-num">1</span><div><p class="t-label">Paste it or snap it</p><p class="t-muted">SMS, WhatsApp, or a MoMo screen. A screenshot works too.</p></div></li>
+        <li class="flex gap-3"><span class="onb-num">2</span><div><p class="t-label">AI checks it for you</p><p class="t-muted">It reads the message and searches the web for known scams.</p></div></li>
+        <li class="flex gap-3"><span class="onb-num">3</span><div><p class="t-label">Get a clear answer</p><p class="t-muted">Scam, Suspicious or Looks OK, with proof and what to do next.</p></div></li>
+      </ol>
+    </section>
+
+    <!-- Which model does what -->
+    <section class="page-pad mt-10" aria-labelledby="who-h">
+      <div class="card p-5">
+        <p class="t-overline t-muted">Open about our AI</p>
+        <h2 id="who-h" class="t-h3 mt-1">Who checks your message</h2>
+        <ul class="mt-4 grid gap-4">
+          <li class="flex gap-3 items-start"><span class="model-avatar model-avatar--nemotron">{{i:scan-text icon-sm}}</span><div><p class="t-label">NVIDIA Nemotron reads it</p><p class="t-small t-muted">Pulls out amounts, numbers, links and pressure tricks.</p></div></li>
+          <li class="flex gap-3 items-start"><span class="model-avatar model-avatar--tavily">{{i:globe icon-sm}}</span><div><p class="t-label">Tavily searches the web</p><p class="t-small t-muted">Finds warnings from CSA, networks and news.</p></div></li>
+          <li class="flex gap-3 items-start"><span class="model-avatar model-avatar--nemotron">{{i:scale icon-sm}}</span><div><p class="t-label">Nemotron weighs the proof</p><p class="t-small t-muted">Gives the answer and shows every source.</p></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Emergency strip -->
+    <section class="page-pad mt-6" aria-labelledby="sos-h">
+      <div class="rounded-xl bg-neutral-900 text-neutral-50 border border-border p-5 overflow-hidden relative">
+        <div class="kente absolute top-0 inset-x-0 rounded-none" aria-hidden="true"></div>
+        <h2 id="sos-h" class="t-h3 mt-2">Already sent money?</h2>
+        <p class="text-neutral-300 mt-1">Act fast. Call your network first, then report it.</p>
+        <a href="tel:292" class="btn btn-accent btn-md btn-block mt-4 !justify-start text-left gap-3">{{i:phone icon-sm}}<span><span class="block">Call or text 292</span><span class="block t-small font-normal">Cyber Security Authority, 24 hours</span></span></a>
+      </div>
+    </section>
+
+    <footer class="page-pad mt-8 t-small t-muted">
+      <p>ScamCheck GH gives advice, not a guarantee. If in doubt, call your network on <strong class="text-text">100</strong>.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

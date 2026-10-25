@@ -1,0 +1,3 @@
+/* App-specific additions (ScamCheck GH) */
+/* v1.1: decorative hero backgrounds retired. Classes kept as no-ops so markup does not break. */
+.hero-glow { background: none; }

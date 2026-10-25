@@ -1,0 +1,28 @@
+# Render web service. The Docker image serves the site and the API together.
+# DEMO_MODE stays true until you set it to false and add keys.
+services:
+  - type: web
+    name: scamcheck-gh
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DEMO_MODE
+        value: "true"
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      - key: NEBIUS_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: NEBIUS_BASE_URL
+        value: https://api.tokenfactory.nebius.com/v1
+      - key: NEBIUS_MODEL_CLASSIFY
+        value: nvidia/Nemotron-3_5-Lightning
+      - key: NEBIUS_MODEL_VERDICT
+        value: nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B
+      - key: NEBIUS_MODEL_VISION
+        value: nvidia/Nemotron-3.5-Super-VL

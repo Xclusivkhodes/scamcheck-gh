@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>ScamCheck GH — Reference screens</title>
+</head>
+<body>
+<div class="max-w-[880px] mx-auto px-6 py-10">
+  <div class="flex items-center justify-between"><img src="assets/logo/lockup-light.svg" alt="ScamCheck GH" class="only-light h-10 w-auto"><img src="assets/logo/lockup-dark.svg" alt="ScamCheck GH" class="only-dark h-10 w-auto"><button type="button" class="theme-toggle" onclick="scToggleTheme()" aria-label="Switch between light and dark mode" title="Light / dark">{{i:moon only-light}}{{i:sun only-dark}}</button></div>
+  <h1 class="t-h1 mt-6">Reference screens</h1>
+  <p class="t-muted mt-2">HTML + Tailwind reference implementation built on <code class="t-mono">tokens.css</code> and the shared component layer. Mobile screens are designed at 360 × 800. Sample content is marked EXAMPLE.</p>
+  <div class="divider mt-6"></div>
+  <ol class="grid sm:grid-cols-2 gap-3 mt-6">
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text min-h-tap-comfy" href="landing.html"><span class="onb-num">1</span><span><strong class="block">Landing + onboarding</strong><span class="t-small t-muted">Hero, input above the fold, examples, 3 steps, model roles</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="input.html"><span class="onb-num">2</span><span><strong class="block">Main input</strong><span class="t-small t-muted">Paste / photo / upload, live hints, examples</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="analysing.html"><span class="onb-num">3</span><span><strong class="block">Analysing (live pipeline)</strong><span class="t-small t-muted">Nemotron → Tavily → Nemotron, streaming</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="result.html"><span class="onb-num">4</span><span><strong class="block">Verdict / result</strong><span class="t-small t-muted">Verdict, confidence, what to do now, reasons</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="evidence.html"><span class="onb-num">5</span><span><strong class="block">Evidence · which model did what</strong><span class="t-small t-muted">Timeline, I/O, latency, sources</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="verdicts.html"><span class="onb-num">6</span><span><strong class="block">Verdict system</strong><span class="t-small t-muted">Scam / Suspicious / Looks OK</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="states.html"><span class="onb-num">7</span><span><strong class="block">States</strong><span class="t-small t-muted">Slow, offline, error, empty, low confidence</span></span></a></li>
+    <li><a class="card p-4 flex items-center gap-3 no-underline text-text" href="landing-desktop.html"><span class="onb-num">8</span><span><strong class="block">Desktop landing (1440)</strong><span class="t-small t-muted">Two-column hero with live result preview</span></span></a></li>
+  </ol>
+</div>
+</body>
+</html>

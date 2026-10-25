@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>How we checked — ScamCheck GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a href="result.html" class="btn btn-ghost btn-icon -ml-2 text-text" aria-label="Back to answer">{{i:arrow-left icon}}</a>
+    <p class="t-label">How we checked</p>
+    <button type="button" class="theme-toggle" onclick="scToggleTheme()" aria-label="Switch between light and dark mode" title="Light / dark">{{i:moon only-light}}{{i:sun only-dark}}</button>
+  </header>
+  <main class="page-pad pb-10">
+    <div class="flex items-center gap-3">
+      <span class="verdict-pill" style="background:var(--color-scam-solid);color:var(--color-on-scam-solid)">{{i:octagon-x icon-xs}} Scam · 96%</span>
+      <span class="latency">{{i:clock icon-xs}} 6.8 s total</span>
+    </div>
+    <h1 class="t-h1 mt-3">Which AI did what</h1>
+    <p class="t-muted mt-1">Every step, in order. Tap a source to read it yourself.</p>
+
+    <section class="card p-4 mt-5" aria-label="Time spent by each model">
+      <div class="flex items-center justify-between t-small"><span class="font-bold">Time per step</span><span class="latency">6.8 s</span></div>
+      <div class="split mt-2" aria-hidden="true"><span class="split-nemotron" style="flex:1.2"></span><span class="split-tavily" style="flex:2.1"></span><span class="split-nemotron" style="flex:3.1;opacity:.75"></span><span class="split-app" style="flex:.4"></span></div>
+      <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3">
+        <span class="legend" style="--dot:var(--color-tool-nemotron)">Nemotron · 2 steps</span>
+        <span class="legend" style="--dot:var(--color-tool-tavily)">Tavily · 1 step</span>
+        <span class="legend" style="--dot:var(--color-primary)">App rules</span>
+      </div>
+    </section>
+
+    <ol class="tl mt-6">
+      <li class="tl-item">
+        <span class="model-avatar model-avatar--nemotron">{{i:scan-text icon-sm}}</span>
+        <div class="flex items-center justify-between gap-2"><p class="t-label">Read the message</p><span class="latency">1.2 s</span></div>
+        <p class="t-small t-muted">NVIDIA Nemotron 3 Nano</p>
+        <div class="card mt-3 p-3">
+          <dl class="io">
+            <dt>In</dt><dd>SMS text, 214 characters</dd>
+            <dt>Out</dt><dd>Amount <strong>GHS 1,250</strong> · phone <strong class="nowrap">024 555 0123</strong> · asks to <strong>send money back</strong> · sender is a number</dd>
+          </dl>
+          <p class="model-id mt-3">nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B</p>
+        </div>
+      </li>
+      <li class="tl-item">
+        <span class="model-avatar model-avatar--tavily">{{i:globe icon-sm}}</span>
+        <div class="flex items-center justify-between gap-2"><p class="t-label">Searched the web</p><span class="latency">2.1 s</span></div>
+        <p class="t-small t-muted">Tavily Search · 2 searches · 3 sources kept</p>
+        <div class="card mt-3 p-3">
+          <dl class="io"><dt>In</dt><dd class="t-mono !text-[0.8125rem]">momo sent by mistake send back scam ghana</dd></dl>
+          <div class="mt-3">
+            <a id="s1" class="source" href="https://www.jbklutse.com/wrong-number-scam-explained/"><span class="source-fav">1</span><span><span class="source-title">Wrong-number MoMo scam explained</span><span class="source-host">jbklutse.com</span></span>{{i:external-link icon-xs text-text-muted}}</a>
+            <a id="s2" class="source" href="https://www.csa.gov.gh/report"><span class="source-fav">2</span><span><span class="source-title">Report a cyber incident</span><span class="source-host">csa.gov.gh</span></span>{{i:external-link icon-xs text-text-muted}}</a>
+            <a id="s3" class="source" href="https://help-center.mtn.com.gh/hc/en-us/articles/10592692795026-How-do-I-report-Mobile-Money-fraud"><span class="source-fav">3</span><span><span class="source-title">Report Mobile Money fraud</span><span class="source-host">help-center.mtn.com.gh</span></span>{{i:external-link icon-xs text-text-muted}}</a>
+          </div>
+        </div>
+      </li>
+      <li class="tl-item">
+        <span class="model-avatar model-avatar--nemotron">{{i:scale icon-sm}}</span>
+        <div class="flex items-center justify-between gap-2"><p class="t-label">Weighed the evidence</p><span class="latency">3.1 s</span></div>
+        <p class="t-small t-muted">NVIDIA Nemotron 3 Super · reasoning</p>
+        <div class="card mt-3 p-3">
+          <dl class="io">
+            <dt>In</dt><dd>Step 1 facts + 3 sources</dd>
+            <dt>Out</dt><dd><strong>Scam, 96%.</strong> Matches the “wrong transfer” pattern. <a class="cite" href="#s1">1</a> Sender is not MobileMoney. <a class="cite" href="#s3">3</a> Nothing points to a real payment.</dd>
+          </dl>
+          <p class="model-id mt-3">nvidia/nemotron-3-super-120b-a12b</p>
+        </div>
+      </li>
+      <li class="tl-item">
+        <span class="model-avatar model-avatar--app">{{i:shield-check icon-sm}}</span>
+        <div class="flex items-center justify-between gap-2"><p class="t-label">Picked your next steps</p><span class="latency">0.4 s</span></div>
+        <p class="t-small t-muted">ScamCheck rules · no AI</p>
+        <div class="card mt-3 p-3 t-small">Official numbers only: MTN *170#, CSA 292. Checked by our team, never written by the AI.</div>
+      </li>
+    </ol>
+
+    <div class="banner banner--info mt-2">{{i:info icon-sm mt-0.5}}<div><strong>About this check</strong><p>Your message is sent to the AI to check it, then deleted. We don’t keep it or sell it.</p></div></div>
+  </main>
+</div>
+</body>
+</html>
