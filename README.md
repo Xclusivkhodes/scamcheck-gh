@@ -1,0 +1,1 @@
+# scamcheck-gh
