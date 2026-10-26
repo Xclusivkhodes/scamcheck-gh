@@ -122,7 +122,6 @@ export function Checker() {
 
   return (
     <div className="sc-page">
-      <div className="kente-bar" />
       <a className="skip-link" href={`#${messageId}`}>
         {t.skip}
       </a>

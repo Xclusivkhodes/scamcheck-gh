@@ -27,7 +27,7 @@ export function cardSvg(payload: CardPayload): string {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
   <rect width="1080" height="1350" fill="#FAFAFA"/>
-  <rect width="1080" height="12" fill="#F0AE2E"/>
+  <rect width="1080" height="12" fill="#4447D1"/>
   <text x="72" y="140" fill="#18181B" font-family="Arial, sans-serif" font-size="36" font-weight="700">ScamCheck GH</text>
   <text x="72" y="190" fill="#52525B" font-family="Arial, sans-serif" font-size="28">Check for family · the full message is not on this card</text>
   <rect x="72" y="250" width="936" height="620" rx="28" fill="#FFFFFF" stroke="${band}" stroke-width="6"/>

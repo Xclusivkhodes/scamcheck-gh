@@ -85,9 +85,12 @@ describe("patterns and grounding", () => {
 describe("radar privacy", () => {
   it("masks the number and does not keep the raw value in the hash label", () => {
     resetRadarForTests();
+    process.env.RADAR_SALT = "test-radar-salt-16";
     const phone = "0244123456";
     expect(maskPhone(phone)).toBe("024 ••• 456");
-    expect(phoneHash(phone)).not.toContain(phone);
+    const hash = phoneHash(phone);
+    expect(hash).toHaveLength(64);
+    expect(hash).not.toContain(phone);
     expect(maskPhone(phone)).not.toContain("123");
   });
 });

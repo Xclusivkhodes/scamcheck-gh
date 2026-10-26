@@ -37,6 +37,18 @@ Ghana numbers, `*170#`-style codes, amounts, links, punycode, and lookalike bran
 - The forwardable card does not include the full message.
 - The website does not read the SMS inbox. The Android app can, only after the person allows it, and it uploads a message only when they tap Check with AI.
 
+## Secrets are stripped before a live prompt
+
+`redactSecrets` in `lib/redact.ts` runs on the text, the search queries, and the prompt builders. PIN, OTP, password, and Ghana Card values become `[redacted]`. Phone numbers are kept. The rules and the on-screen message still see the original text. Demo mode never reaches this call.
+
+## “Not a scam” stays on the device
+
+The mark is `localStorage` key `scamcheck-not-scam`. It can move a later official alert from Caution or Can't tell to Safe. It does not change a Scam band, and it does not apply when the message asks for a PIN, OTP, or password. The server verdict is unchanged.
+
+## A family watch link is not an account
+
+`POST /api/family` accepts a code, a band (`scam` or `suspicious`), and a short pattern title. It rejects a body that includes `text` or `message`, and it rejects a title that contains a long digit run. `data/family-alerts.json` is gitignored. There is no push channel.
+
 ## WhatsApp does not call Meta
 
 `POST /api/whatsapp` runs the same checker and returns the verdict. It does not POST to the Graph API, even if `WHATSAPP_SEND=1`. A real reply needs a Meta business app, a test number, and a later code change. `GET` only answers the verify handshake when `WHATSAPP_VERIFY_TOKEN` matches.

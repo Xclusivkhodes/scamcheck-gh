@@ -56,19 +56,31 @@ export const PATTERN_LIBRARY: PatternCard[] = [
 
 const STOP = new Set(["the", "and", "for", "you", "your", "this", "that", "with", "from", "have", "will", "your"]);
 
+/** Best card, kept for callers that only need one name. */
 export function matchPattern(text: string): PatternMatch | null {
+  return matchPatterns(text)[0] ?? null;
+}
+
+/**
+ * Up to three nearest cards. The best must clear 1.2. The next two must be
+ * close to that score, so a weak library hit is not shown as a match.
+ */
+export function matchPatterns(text: string, limit = 3): PatternMatch[] {
   const query = tokens(text);
-  if (query.length < 4) return null;
-  let best: { card: PatternCard; score: number } | null = null;
+  if (query.length < 4) return [];
   const docs = PATTERN_LIBRARY.map((card) => tokens(card.text));
   const avg = docs.reduce((sum, doc) => sum + doc.length, 0) / docs.length;
-  for (let index = 0; index < PATTERN_LIBRARY.length; index += 1) {
-    const score = bm25(query, docs[index], docs, avg);
-    if (!best || score > best.score) best = { card: PATTERN_LIBRARY[index], score };
-  }
-  if (!best || best.score < 1.2) return null;
-  const { id, title, source, year, pattern } = best.card;
-  return { id, title, source, year, pattern };
+  const ranked = PATTERN_LIBRARY.map((card, index) => ({
+    card,
+    score: bm25(query, docs[index], docs, avg),
+  })).sort((a, b) => b.score - a.score);
+  const best = ranked[0];
+  if (!best || best.score < 1.2) return [];
+  const floor = Math.max(0.9, best.score * 0.45);
+  return ranked
+    .filter((item, index) => index === 0 || item.score >= floor)
+    .slice(0, limit)
+    .map(({ card }) => ({ id: card.id, title: card.title, source: card.source, year: card.year, pattern: card.pattern }));
 }
 
 function bm25(query: string[], doc: string[], docs: string[][], avg: number): number {

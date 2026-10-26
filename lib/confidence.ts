@@ -1,9 +1,8 @@
-/** Brand meter: 1 < 40, 2 = 40–59, 3 = 60–74, 4 = 75–89, 5 ≥ 90. */
+/** Four segments. The panel shows the word, never a percentage. */
 export function confidenceMeter(confidence: number): { words: string; segments: number } {
-  if (confidence >= 90) return { words: "Very sure", segments: 5 };
-  if (confidence >= 75) return { words: "Sure", segments: 4 };
-  if (confidence >= 60) return { words: "Fairly sure", segments: 3 };
-  if (confidence >= 40) return { words: "A bit sure", segments: 2 };
+  if (confidence >= 90) return { words: "Very sure", segments: 4 };
+  if (confidence >= 75) return { words: "Sure", segments: 3 };
+  if (confidence >= 60) return { words: "Fairly sure", segments: 2 };
   return { words: "Not sure", segments: 1 };
 }
 

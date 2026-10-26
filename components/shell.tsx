@@ -25,7 +25,7 @@ function currentTheme(): "light" | "dark" {
 
 export function applyTheme(theme: "light" | "dark") {
   document.documentElement.dataset.theme = theme;
-  const color = theme === "dark" ? "#0F0F11" : "#FAFAFA";
+  const color = theme === "dark" ? "#0C0C0E" : "#FAFAFA";
   document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
     meta.setAttribute("content", color);
   });

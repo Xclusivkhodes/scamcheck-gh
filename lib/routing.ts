@@ -1,13 +1,7 @@
 import { MODEL_IDS } from "./budget";
 import { models } from "./config";
+import { priceFor, softTripped } from "./spend";
 import type { RoutePlan } from "./types";
-
-const PRICE: Record<string, { in: number; out: number }> = {
-  [MODEL_IDS.nano]: { in: 0.06, out: 0.24 },
-  [MODEL_IDS.lightning]: { in: 0.06, out: 0.24 },
-  [MODEL_IDS.super]: { in: 0.3, out: 0.9 },
-  [MODEL_IDS.vision]: { in: 0.3, out: 0.9 },
-};
 
 /**
  * Lightning classifies. Nano writes the answer.
@@ -18,8 +12,10 @@ export function chooseRoute(input: { confidence: number; maxAmountGhs: number | 
   const ids = models();
   const amount = input.maxAmountGhs != null && input.maxAmountGhs >= 500;
   const unsure = input.confidence < 70 || (input.points >= 15 && input.points < 45 && input.confidence < 80);
-  const escalated = amount || unsure;
+  const blocked = softTripped();
+  const escalated = !blocked && (amount || unsure);
   const reasons: string[] = [];
+  if (blocked && (amount || unsure)) reasons.push("the soft budget is in use, so Super stays off");
   if (amount) reasons.push("the amount is at least GH¢500");
   if (unsure) reasons.push("the first pass is not sure enough");
   const verdictModel = escalated ? MODEL_IDS.super : ids.verdict;
@@ -44,7 +40,7 @@ export function estimateUsd(model: string, inputTokens: number, outputTokens: nu
 }
 
 function cost(model: string, inputTokens: number, outputTokens: number): number {
-  const price = PRICE[model] ?? PRICE[MODEL_IDS.nano];
+  const price = priceFor(model);
   return (inputTokens / 1_000_000) * price.in + (outputTokens / 1_000_000) * price.out;
 }
 

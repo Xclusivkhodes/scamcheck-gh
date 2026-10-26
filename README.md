@@ -26,7 +26,7 @@ npm run build && npm start
 
 Copy `.env.example` to `.env` only when you mean to leave sample mode. Set `DEMO_MODE=false` only after the API budget is accepted. You need `NEBIUS_API_KEY` and `TAVILY_API_KEY`. Do not commit `.env`.
 
-On 25 Oct 2026: unit tests 30 passed, eval 59/61 (96.7%), Playwright 20 passed, production build succeeded. Lighthouse has not been measured yet.
+On 26 Oct 2026: unit tests 39 passed, eval 59/61 (96.7%), Playwright 25 passed, typecheck, lint, and the production build passed. `npm run typecheck` runs `next typegen` first, because Next.js 16 route helpers are generated and `next-env.d.ts` is gitignored. Lighthouse has not been measured yet. Live Nebius and Tavily stay off unless `DEMO_MODE=false` and the keys are set on the host.
 
 ## Why this is not a vague warning
 
@@ -41,19 +41,21 @@ Twi strings are a **beta** translation. A native speaker has not checked them.
 ## What a check does
 
 1. **Rules, before any model.** Ghana numbers, `*170#`-style short codes, GH¢ amounts, links, punycode, and lookalike brands by edit distance. Domain age (public RDAP) and Google Safe Browsing run only if you opt in.
-2. **Pattern library.** The nearest of 46 curated examples is shown, for example “Fake wrong transfer (MTN MoMo, 2024)”.
+2. **Pattern library.** The nearest three of 46 curated examples are shown, for example “Fake wrong transfer (MTN MoMo, 2024)”. In live mode those titles are added to the prompt. The message still decides the verdict.
 3. **Cheap model first.** Lightning classifies. Nano writes the answer. Super is used only when the first pass is under 70% sure or the amount is at least GH¢500. Ultra is rejected.
 4. **Three samples when it is unsure.** In sample mode the votes come from the rules. Live mode calls Lightning three times only in that case, and only if the token budget allows it.
 5. **A second pass drops unsupported lines.** A sentence that names a link or a source number we did not fetch is removed.
-6. **Fixed contacts.** MTN `*170#`, care 100, CSA 292, Police 191 / 18555. The model cannot add a number.
+6. **Secrets stay out of the live prompt.** PIN, OTP, password, and Ghana Card values are replaced with `[redacted]` before Nebius or Tavily sees the text. Phone numbers stay, because they are what the check is about. Sample mode does not make those calls.
+7. **Fixed contacts.** MTN `*170#`, care 100, CSA 292, Police 191 / 18555. The model cannot add a number.
 
 ## Coming back
 
 - **Share to ScamCheck.** The manifest has a `share_target` for `/share`. Install the PWA and share text into the box. Nothing is read from the SMS inbox.
 - **WhatsApp.** `/whatsapp` and `POST /api/whatsapp` return a verdict. They do not send a WhatsApp message. A Meta app is still required. See [docs/FEATURES.md](docs/FEATURES.md).
-- **Check for Mum.** `/family` stores a name in this browser. The card at `/family/card` has the band and the next step, not the full message.
-- **Ghana Scam Radar.** `/radar` lists sample patterns plus anonymised checks from this server.
-- **My Shield, this week, USSD.** `/shield` is on-device history. `/digest` is the quiz. `/ussd` explains why there is no public short code.
+- **Check for Mum.** `/family` stores a name in this browser and creates a watch link. A Scam or Caution check adds an alert with the band and the pattern, not the message. Open `/family/watch?code=…` on the other phone. There is no push notification. The card at `/family/card` has the band and the next step, not the full message.
+- **Not a scam.** On a result, this saves a note in the browser. The next similar official alert shows it, and can move from Caution to Safe. A PIN request and a Scam band stay warnings.
+- **Ghana Scam Radar.** `/radar` lists sample patterns plus anonymised checks from this server. If a number in the message is already on the radar, the verdict says how many times it was reported.
+- **My Shield, this week, USSD.** `/shield` is on-device history. `/digest` is the quiz, and a perfect score once a week keeps a streak. `/ussd` explains why there is no public short code.
 
 ## Android
 

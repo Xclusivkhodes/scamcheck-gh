@@ -1,15 +1,20 @@
 # Render web service. The Docker image serves the site and the API together.
 # DEMO_MODE stays true until you set it to false and add keys.
+# Keep-warm and the health check must hit /api/healthz. Do not point them at /api/check.
+# The free plan has no durable disk. data/spend.json and data/radar.json reset on restart.
+# Leave DEMO_MODE=true on a free instance, or the spend ledger will not survive a restart.
 services:
   - type: web
     name: scamcheck-gh
     runtime: docker
     plan: free
-    healthCheckPath: /api/health
+    healthCheckPath: /api/healthz
     dockerfilePath: ./Dockerfile
     envVars:
       - key: DEMO_MODE
         value: "true"
+      - key: TRUST_PROXY
+        value: "1"
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_SITE_URL
@@ -26,3 +31,9 @@ services:
         value: nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B
       - key: NEBIUS_MODEL_VISION
         value: nvidia/Nemotron-3.5-Super-VL
+      - key: RADAR_SALT
+        sync: false
+      - key: ADMIN_SECRET
+        sync: false
+      - key: WHATSAPP_APP_SECRET
+        sync: false

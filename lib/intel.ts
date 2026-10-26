@@ -1,16 +1,18 @@
 import { planSamples } from "./consistency";
 import { safeHeadline } from "./copy";
 import { groundClaims } from "./grounding";
-import { matchPattern } from "./patterns";
+import { matchPatterns } from "./patterns";
 import { inspectMessage } from "./precheck";
-import { rememberCheck } from "./radar";
+import { radarHitsFor, rememberCheck } from "./radar";
 import { chooseRoute } from "./routing";
 import type { CheckResult, ScamPattern, Verdict } from "./types";
 
 export function attachIntel(result: CheckResult): CheckResult {
   const seeded = result.precheck?.reputation ?? [];
   const precheck = inspectMessage(result.inputText, seeded);
-  const patternMatch = matchPattern(result.inputText);
+  const patternMatches = matchPatterns(result.inputText);
+  const patternMatch = patternMatches[0] ?? null;
+  const radarHits = radarHitsFor(precheck);
   const maxAmount = precheck.amountsGhs.length > 0 ? Math.max(...precheck.amountsGhs) : null;
   const route = result.route ?? chooseRoute({ confidence: result.confidence, maxAmountGhs: maxAmount, points: precheck.points });
   const consistency = result.consistency ?? planSamples(result.verdict, result.confidence, result.mode === "live");
@@ -18,7 +20,7 @@ export function attachIntel(result: CheckResult): CheckResult {
   const verdict = calibrateVerdict(result.verdict, result.confidence, precheck.points, consistency.agreement, result.pattern);
   const changed = verdict !== result.verdict;
   const hosts = precheck.links.filter((link) => link.host && !link.official).map((link) => link.host);
-  if (result.mode === "demo" || result.mode === "live") {
+  if (result.mode === "live") {
     rememberCheck({
       pattern: patternMatch?.pattern ?? result.pattern,
       title: patternMatch?.title ?? result.patternLabel,
@@ -33,6 +35,8 @@ export function attachIntel(result: CheckResult): CheckResult {
     reasoning: grounding.kept.length > 0 ? grounding.kept : result.reasoning,
     precheck,
     patternMatch,
+    patternMatches,
+    radarHits,
     route,
     consistency,
     grounding,

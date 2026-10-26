@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { isDemoMode } from "../lib/config";
+import { resetBreaker } from "../lib/breaker";
 import { clearCompletionCache, nebiusChat } from "../lib/nebius";
 import { MODEL_IDS, requestTokenCap } from "../lib/budget";
 
@@ -8,6 +9,7 @@ const original = { ...process.env };
 afterEach(() => {
   process.env = { ...original };
   clearCompletionCache();
+  resetBreaker();
   vi.unstubAllGlobals();
 });
 

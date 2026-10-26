@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -21,9 +21,7 @@ import {
   Phone,
   RefreshCw,
   Scale,
-  Search,
   Share2,
-  ShieldCheck,
   TriangleAlert,
   WifiOff,
   X,
@@ -33,10 +31,12 @@ import { Shell } from "@/components/shell";
 import { cardQuery } from "@/lib/card";
 import { confidenceMeter, modelShortName } from "@/lib/confidence";
 import { highlightNeedles, highlightSpans } from "@/lib/highlight";
+import { noteHighRiskCheck } from "@/lib/family-local";
+import { applyNotScam, notScamKey, notScamSnapshot, readNotScamMarks, saveNotScamMark, subscribeNotScam } from "@/lib/not-scam";
 import { rememberShield } from "@/lib/shield";
-import { confidenceWords, verdictWord } from "@/lib/copy";
+import { confidenceWords, verdictPanelWord, verdictWord } from "@/lib/copy";
 import { EXAMPLES } from "@/lib/examples";
-import { OFFICIAL_CONTACTS } from "@/lib/official";
+import { buildActions, OFFICIAL_CONTACTS } from "@/lib/official";
 import { messageTooShort, photoIsBlurry, prescanMessage, shouldWarnSlow } from "@/lib/prescan";
 import type { ActionItem, CheckResult, Lang, TraceStep, Verdict } from "@/lib/types";
 
@@ -73,6 +73,7 @@ interface SseEvent {
   result?: CheckResult;
   message?: string;
   code?: string;
+  reason?: string;
 }
 
 function tx(lang: Lang, en: string, tw: string) {
@@ -90,24 +91,6 @@ function hostOf(url: string) {
 function formatMs(ms: number) {
   if (ms < 1000) return `${ms} ms`;
   return `${(ms / 1000).toFixed(1)} s`;
-}
-
-function wait(ms: number, signal: AbortSignal) {
-  return new Promise<void>((resolve, reject) => {
-    if (signal.aborted) {
-      reject(new DOMException("Aborted", "AbortError"));
-      return;
-    }
-    const timer = setTimeout(() => resolve(), ms);
-    signal.addEventListener(
-      "abort",
-      () => {
-        clearTimeout(timer);
-        reject(new DOMException("Aborted", "AbortError"));
-      },
-      { once: true },
-    );
-  });
 }
 
 async function readSse(response: Response): Promise<SseEvent[]> {
@@ -178,7 +161,7 @@ export function CheckerApp({ initialText = "" }: { initialText?: string }) {
   const [slow, setSlow] = useState(false);
   const [result, setResult] = useState<CheckResult | null>(null);
   const [failure, setFailure] = useState("");
-  const [models, setModels] = useState(FALLBACK_MODELS);
+  const models = FALLBACK_MODELS;
   const [demoMode, setDemoMode] = useState(true);
   const [elapsed, setElapsed] = useState(0);
   const [hearing, setHearing] = useState(false);
@@ -197,9 +180,8 @@ export function CheckerApp({ initialText = "" }: { initialText?: string }) {
     const controller = new AbortController();
     fetch("/api/health", { signal: controller.signal })
       .then((response) => response.json())
-      .then((body: { demoMode?: boolean; models?: typeof FALLBACK_MODELS }) => {
-        if (body.models?.classify) setModels(body.models);
-        setDemoMode(body.demoMode !== false);
+      .then((body: { mode?: string; demoMode?: boolean }) => {
+        setDemoMode(body.mode ? body.mode !== "live" : body.demoMode !== false);
       })
       .catch(() => undefined);
     return () => controller.abort();
@@ -282,9 +264,9 @@ export function CheckerApp({ initialText = "" }: { initialText?: string }) {
       setSlow(false);
 
       if (!response.ok) {
-        const body = (await response.json().catch(() => ({}))) as { error?: string; code?: string };
+        const body = (await response.json().catch(() => ({}))) as { error?: string; code?: string; reason?: string };
         const error = new Error(body.error || tx(job.language, "We could not finish this check. Try again.", "Yɛantumi anwie check no. Bɔ mmɔden bio."));
-        (error as Error & { code?: string }).code = body.code;
+        (error as Error & { code?: string }).code = body.reason || body.code;
         throw error;
       }
 
@@ -292,37 +274,27 @@ export function CheckerApp({ initialText = "" }: { initialText?: string }) {
       const failed = events.find((event) => event.type === "error");
       if (failed) {
         const error = new Error(failed.message || "We could not finish this check. Try again.");
-        (error as Error & { code?: string }).code = failed.code;
+        (error as Error & { code?: string }).code = failed.reason || failed.code;
         throw error;
       }
       const done = events.find((event) => event.type === "result" && event.result);
       if (!done?.result) throw new Error(tx(job.language, "We could not finish this check. Try again.", "Yɛantumi anwie check no. Bɔ mmɔden bio."));
 
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const shown: ShownStep[] = done.result.trace.map((step) => ({
         id: step.id,
         title: step.label || step.title,
         model: step.model,
         provider: (step.provider === "tavily" || step.provider === "rules" ? step.provider : "nemotron") as Provider,
-        status: "pending",
-        output: "",
+        status: step.status === "error" ? "error" : step.status === "skipped" ? "skipped" : "done",
+        ms: step.ms ?? step.durationMs,
+        output: step.output || step.summary,
       }));
-      for (let index = 0; index < done.result.trace.length; index += 1) {
-        const source = done.result.trace[index];
-        shown[index] = { ...shown[index], status: "active", output: "" };
-        setSteps(shown.map((step) => ({ ...step })));
-        if (!reduce) await wait(700, controller.signal);
-        shown[index] = {
-          ...shown[index],
-          status: source.status === "error" ? "error" : source.status === "skipped" ? "skipped" : "done",
-          ms: source.ms ?? source.durationMs,
-          output: source.output || source.summary,
-        };
-        setSteps(shown.map((step) => ({ ...step })));
-      }
+      setSteps(shown);
       if (job.text) setText(job.text);
-      setResult(done.result);
-      rememberShield(done.result);
+      const merged = { ...done.result, inputText: done.result.inputText || job.text || "" };
+      setResult(merged);
+      rememberShield(merged);
+      noteHighRiskCheck(merged);
       setView("result");
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
@@ -579,7 +551,7 @@ function Home(props: {
             <LockKeyhole className="icon-xs" aria-hidden strokeWidth={2} />
             {tx(lang, "Free · We never ask for your PIN", "Ɛyɛ free · Yɛmmisa wo PIN")}
           </p>
-          <div className="lang" role="group" aria-label={tx(lang, "Language", "Kasa")}>
+          <div className="seg" role="group" aria-label={tx(lang, "Language", "Kasa")}>
             <button type="button" aria-pressed={lang === "en"} onClick={() => props.setLang("en")}>
               EN
             </button>
@@ -592,10 +564,7 @@ function Home(props: {
         <h1 className="t-display mt-4">
           {tx(lang, "Strange message?", "Nkrasɛm a ɛyɛ nwanwa?")}
           <br />
-          <span className="relative inline-block">
-            {tx(lang, "Check it first.", "Hwɛ ansa.")}
-            <span className="kente kente--thin absolute left-0 right-1 -bottom-1.5" aria-hidden="true" />
-          </span>
+          {tx(lang, "Check it first.", "Hwɛ ansa.")}
         </h1>
         {props.initialText ? (
           <p className="banner banner--info mt-4" role="status">
@@ -730,7 +699,7 @@ function Home(props: {
             </button>
             <p className="t-small t-muted text-center mt-2 cluster" style={{ justifyContent: "center" }}>
               <LockKeyhole className="icon-xs" aria-hidden strokeWidth={2} />
-              {tx(lang, "About 10 seconds · Not saved to disk", "Simma 10 · Yɛnsie no wɔ disk so")}
+              {tx(lang, "Not saved to disk. A live check can add a masked number to Scam Radar.", "Yɛnsie no wɔ disk so. Check ankasa betumi de nɔma a yɛakata aka Scam Radar ho.")}
             </p>
           </form>
         )}
@@ -759,18 +728,23 @@ function Home(props: {
           <p>Cash In received for GHS 1,250… kindly send it back to 024 555 0123.</p>
         </div>
         <section className="verdict verdict--scam mt-4" aria-label="Example verdict">
-          <div className="kente kente--scam rounded-none" aria-hidden="true" />
-          <div className="p-5">
-            <div className="flex items-center gap-4">
-              <span className="verdict-badge">
-                <OctagonX className="icon-xl" aria-hidden strokeWidth={2.25} />
-              </span>
-              <div>
-                <p className="t-overline">Example</p>
-                <p className="t-verdict verdict-word">Scam</p>
-              </div>
+          <span className="badge verdict-badge">
+            <OctagonX className="icon-xs" aria-hidden strokeWidth={2} />
+            Example
+          </span>
+          <p className="t-verdict">Scam</p>
+          <p className="verdict-headline">Do not send the money back.</p>
+          <div className="meter">
+            <div className="meter-head">
+              <span>How sure we are</span>
+              <b>Very sure</b>
             </div>
-            <p className="t-h3 verdict-text mt-4">Do not send the money back.</p>
+            <div className="meter-bar" aria-hidden="true">
+              <i className="on" />
+              <i className="on" />
+              <i className="on" />
+              <i className="on" />
+            </div>
           </div>
         </section>
       </aside>
@@ -795,6 +769,8 @@ function Home(props: {
         <p className="cluster mt-4">
           <Link className="btn btn-secondary btn-md" href="/radar">Scam Radar</Link>
           <Link className="btn btn-secondary btn-md" href="/family">Check for Mum</Link>
+          <Link className="btn btn-secondary btn-md" href="/shield">My Shield</Link>
+          <Link className="btn btn-secondary btn-md" href="/digest">This week</Link>
           <Link className="btn btn-secondary btn-md" href="/whatsapp">WhatsApp bot</Link>
         </p>
       </section>
@@ -831,29 +807,23 @@ function Home(props: {
           </h2>
           <ul className="who-grid mt-4">
             <li className="flex gap-3 items-start">
-              <span className="model-avatar model-avatar--nemotron">
-                <ScanIcon />
-              </span>
               <div>
-                <p className="t-label">Nemotron reads it</p>
+                <p className="model model--nemotron">Nemotron</p>
+                <p className="t-label mt-1">Nemotron reads it</p>
                 <p className="model-id mt-1">{props.models.classify}</p>
               </div>
             </li>
             <li className="flex gap-3 items-start">
-              <span className="model-avatar model-avatar--tavily">
-                <Search className="icon-sm" aria-hidden strokeWidth={2} />
-              </span>
               <div>
-                <p className="t-label">Tavily searches the web</p>
+                <p className="model model--tavily">Tavily</p>
+                <p className="t-label mt-1">Tavily searches the web</p>
                 <p className="t-small t-muted">Public warnings from CSA, networks, and news.</p>
               </div>
             </li>
             <li className="flex gap-3 items-start">
-              <span className="model-avatar model-avatar--app">
-                <ShieldCheck className="icon-sm" aria-hidden strokeWidth={2} />
-              </span>
               <div>
-                <p className="t-label">Rules pick the numbers</p>
+                <p className="model">Rules</p>
+                <p className="t-label mt-1">Rules pick the numbers</p>
                 <p className="model-id mt-1">scamcheck-rules</p>
               </div>
             </li>
@@ -862,15 +832,14 @@ function Home(props: {
       </section>
 
       <section className="mt-6" style={{ gridColumn: "1 / -1" }} aria-labelledby="sos-heading">
-        <div className="rounded-xl bg-neutral-900 text-neutral-50 border border-border p-5 overflow-hidden relative">
-          <div className="kente absolute top-0 inset-x-0 rounded-none" aria-hidden="true" />
-          <h2 id="sos-heading" className="t-h3 mt-2">
+        <div className="card">
+          <h2 id="sos-heading" className="t-h3">
             {tx(lang, "Already sent money?", "Wode sika akɔ dedaw?")}
           </h2>
-          <p className="text-neutral-300 mt-1">
+          <p className="t-muted mt-1">
             {tx(lang, "Act fast. Call your network first, then report it.", "Yɛ ntɛm. Frɛ wo network ansa, na bɔ amanneɛ.")}
           </p>
-          <a className="btn btn-accent btn-md btn-block mt-4" href={OFFICIAL_CONTACTS.csaHref} style={{ justifyContent: "flex-start" }}>
+          <a className="btn btn-primary btn-md btn-block mt-4" href={OFFICIAL_CONTACTS.csaHref} style={{ justifyContent: "flex-start" }}>
             <Phone className="icon-sm" aria-hidden strokeWidth={2} />
             <span>
               <span className="block">{tx(lang, "Call or text 292", "Frɛ anaa SMS 292")}</span>
@@ -881,10 +850,6 @@ function Home(props: {
       </section>
     </div>
   );
-}
-
-function ScanIcon() {
-  return <MessageSquareText className="icon-sm" aria-hidden strokeWidth={2} />;
 }
 
 function Checking(props: {
@@ -944,26 +909,16 @@ function Checking(props: {
           </div>
         </div>
       ) : null}
-      <ol className="steps mt-5" aria-label={tx(props.lang, "What the check is doing", "Nea check no reyɛ")}>
+      <ol className="trace mt-5" aria-label={tx(props.lang, "What the check is doing", "Nea check no reyɛ")}>
         {props.steps.map((step) => (
           <li
             key={step.id}
             className={`step ${step.status === "done" ? "step--done" : ""} ${step.status === "active" ? "step--active" : ""} ${step.status === "error" ? "step--error" : ""} ${step.status === "pending" ? "step--pending" : ""}`}
             aria-current={step.status === "active" ? "step" : undefined}
           >
-            <span className="step-dot">
-              {step.status === "active" ? (
-                <LoaderCircle className="icon-sm spin" aria-hidden strokeWidth={2} />
-              ) : step.status === "error" ? (
-                <X className="icon-sm" aria-hidden strokeWidth={2} />
-              ) : step.status === "done" || step.status === "skipped" ? (
-                <CircleCheckBig className="icon-sm" aria-hidden strokeWidth={2} />
-              ) : (
-                <Clock className="icon-sm" aria-hidden strokeWidth={2} />
-              )}
-            </span>
+            <span className="dot" aria-hidden="true" />
             <div>
-              <p className="step-title">{step.title}</p>
+              <p>{step.title}</p>
               <p className="mt-1 cluster">
                 <ModelChip provider={step.provider} model={step.model} />
                 <Timing step={step} />
@@ -1034,7 +989,26 @@ function ResultView(props: {
   onEvidence: () => void;
   onHear: () => void;
 }) {
-  const { result, lang } = props;
+  const { lang } = props;
+  const marksRaw = useSyncExternalStore(subscribeNotScam, notScamSnapshot, () => "[]");
+  const marks = readNotScamMarks(marksRaw);
+  const savedMark = marks.some((mark) => mark.key === notScamKey(props.result.pattern));
+  const decision = applyNotScam({
+    verdict: props.result.verdict,
+    confidence: props.result.confidence,
+    pattern: props.result.pattern,
+    text: props.result.inputText,
+    hasSecretSignal: props.result.precheck?.signals.some((signal) => signal.id === "secret"),
+    marks,
+  });
+  const result: CheckResult = decision.applied
+    ? {
+        ...props.result,
+        verdict: decision.verdict,
+        confidence: decision.confidence,
+        actions: buildActions(decision.verdict, props.result.pattern, props.result.entities, lang, props.result.inputText),
+      }
+    : props.result;
   const meter = confidenceMeter(result.confidence);
   const tone = result.verdict === "scam" ? "scam" : result.verdict === "suspicious" ? "suspicious" : result.verdict === "looks_ok" ? "ok" : "unsure";
   const groups = groupActions(result.actions);
@@ -1053,47 +1027,28 @@ function ResultView(props: {
       </header>
       <div className="result-grid mt-4">
         <div>
-          <section className={`verdict ${tone === "unsure" ? "" : `verdict--${tone}`} rise`} role="status" aria-labelledby="verdict-title">
-            {tone !== "unsure" ? <div className={`kente kente--${tone} rounded-none`} aria-hidden="true" /> : null}
-            <div className="p-5">
-              <div className="flex items-center gap-4">
-                <span className="verdict-badge" style={tone === "unsure" ? { background: "var(--color-surface-sunken)", color: "var(--color-text)" } : undefined}>
-                  <VerdictIcon verdict={result.verdict} />
-                </span>
-                <div>
-                  <p className="t-overline">
-                    {tx(lang, "Verdict", "Mmuae")}{" "}
-                    {lang === "en" ? (
-                      <span className="tw" lang="tw">
-                        · {verdictWord(result.verdict, "tw")}
-                      </span>
-                    ) : null}
-                  </p>
-                  <h1 id="verdict-title" className="t-verdict verdict-word" tabIndex={-1}>
-                    {verdictWord(result.verdict, lang)}
-                  </h1>
-                </div>
+          <section className={`verdict ${tone === "unsure" ? "" : `verdict--${tone}`}`} role="status" aria-live="polite" aria-labelledby="verdict-title">
+            <span className="badge verdict-badge">
+              <VerdictIcon verdict={result.verdict} />
+              {tx(lang, "Verdict", "Mmuae")}
+            </span>
+            <h1 id="verdict-title" className="t-verdict" tabIndex={-1}>
+              {verdictPanelWord(result.verdict, lang)}
+            </h1>
+            <p className="verdict-headline">{result.headline}</p>
+            <div className="meter">
+              <div className="meter-head">
+                <span>{tx(lang, "How sure we are", "Sɛnea yɛgye di")}</span>
+                <b>{lang === "tw" ? confidenceWords(result.confidence, "tw") : meter.words}</b>
               </div>
-              <p className="t-h3 verdict-text mt-4">{result.headline}</p>
-              {tone !== "unsure" ? (
-                <div className="mt-5">
-                  <div className="flex items-baseline justify-between t-small">
-                    <span className="font-bold verdict-text">{tx(lang, "How sure we are", "Sɛnea yɛgye di")}</span>
-                    <span className="font-bold">
-                      {lang === "tw" ? confidenceWords(result.confidence, "tw") : meter.words} · {result.confidence}%
-                    </span>
-                  </div>
-                  <div className="meter mt-2" aria-hidden="true">
-                    {[0, 1, 2, 3, 4].map((index) => (
-                      <i key={index} className={index < meter.segments ? "on" : undefined} />
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <p className="t-muted mt-4">
-                  {tx(lang, "Treat it as suspicious. Call your network on 100 before you send anything.", "Fa no sɛ ɛyɛ hu. Frɛ wo network wɔ 100 ansa na woatua.")}
-                </p>
-              )}
+              <div className="meter-bar" aria-hidden="true">
+                {[0, 1, 2, 3].map((index) => (
+                  <i key={index} className={index < meter.segments ? "on" : undefined} />
+                ))}
+              </div>
+            </div>
+          </section>
+          <div className="card mt-4">
               <button type="button" className="mt-4 flex items-center gap-2 flex-wrap t-small text-text" onClick={props.onEvidence}>
                 <ModelChip provider="nemotron" model={result.trace.find((step) => step.provider === "nemotron")?.model || "Nemotron"} />
                 <span className="model model--tavily">Tavily · {sourceCount}</span>
@@ -1104,7 +1059,6 @@ function ResultView(props: {
               </button>
               <p className="t-small t-muted mt-2">{nemotronSteps} Nemotron {nemotronSteps === 1 ? "step" : "steps"} · rules added the numbers</p>
             </div>
-          </section>
           {result.checkedWithoutWeb ? (
             <div className="banner banner--warn mt-4" role="status">
               <Info className="icon-sm mt-0.5" aria-hidden strokeWidth={2} />
@@ -1123,11 +1077,62 @@ function ResultView(props: {
               </div>
             </div>
           ) : null}
-          {result.patternMatch ? (
-            <p className="t-small mt-4">
-              Matches known pattern: <strong>{result.patternMatch.title}</strong> ({result.patternMatch.source}, {result.patternMatch.year})
-            </p>
+          {(result.patternMatches && result.patternMatches.length > 0) || result.patternMatch ? (
+            <section className="mt-4" aria-labelledby="matches-heading">
+              <h2 id="matches-heading" className="t-label">
+                Matches
+              </h2>
+              <ul className="card mt-2 overflow-hidden">
+                {(result.patternMatches && result.patternMatches.length > 0 ? result.patternMatches : result.patternMatch ? [result.patternMatch] : []).map((match, index) => (
+                  <li className="action" key={match.id}>
+                    <span className="action-num">{index + 1}</span>
+                    <div>
+                      <p className="action-title">{match.title}</p>
+                      <p className="t-muted mt-1">
+                        {match.source}, {match.year}
+                        {index === 0 ? " · closest" : ""}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
           ) : null}
+          {result.precheck?.signals.some((signal) => signal.id === "thread") ? (
+            <p className="t-small mt-3">This chat turns into a payment in the later lines. Romance and job scams often change halfway through.</p>
+          ) : null}
+          {result.radarHits && result.radarHits.length > 0 ? (
+            <ul className="mt-3" aria-label="Radar reports">
+              {result.radarHits.map((hit) => (
+                <li key={`${hit.kind}-${hit.label}`}>
+                  <Link className="text-link" href="/radar">
+                    {hit.kind === "number" ? `This number ${hit.label}` : hit.label} was reported {hit.count} {hit.count === 1 ? "time" : "times"}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {decision.note ? (
+            <div className={`banner ${decision.tone === "warn" ? "banner--warn" : "banner--info"} mt-4`} role="status">
+              <Info className="icon-sm mt-0.5" aria-hidden strokeWidth={2} />
+              <p>{decision.note}</p>
+            </div>
+          ) : null}
+          <button
+            type="button"
+            className="btn btn-secondary btn-md btn-block mt-4"
+            onClick={() =>
+              saveNotScamMark({
+                key: notScamKey(props.result.pattern),
+                pattern: props.result.pattern,
+                at: new Date().toISOString(),
+                label: props.result.patternLabel,
+              })
+            }
+          >
+            {savedMark ? "Saved on this phone" : "Not a scam"}
+          </button>
+          <p className="t-small t-muted mt-2">Saves on this phone only. It can soften the next similar official alert. It cannot hide a PIN request.</p>
           {result.precheck && result.precheck.signals.length > 0 ? (
             <ul className="cluster mt-3" aria-label="Pre-check signals">
               {result.precheck.signals.map((signal) => (
@@ -1293,10 +1298,10 @@ function ActionList({ groups, verdict }: { lang: Lang; groups: ActionItem[][]; v
 }
 
 function VerdictIcon({ verdict }: { verdict: Verdict }) {
-  if (verdict === "scam") return <OctagonX className="icon-xl" aria-hidden strokeWidth={2.25} />;
-  if (verdict === "suspicious") return <TriangleAlert className="icon-xl" aria-hidden strokeWidth={2.25} />;
-  if (verdict === "looks_ok") return <CircleCheckBig className="icon-xl" aria-hidden strokeWidth={2.25} />;
-  return <CircleHelp className="icon-xl" aria-hidden strokeWidth={2.25} />;
+  if (verdict === "scam") return <OctagonX className="icon-xs" aria-hidden strokeWidth={2} />;
+  if (verdict === "suspicious") return <TriangleAlert className="icon-xs" aria-hidden strokeWidth={2} />;
+  if (verdict === "looks_ok") return <CircleCheckBig className="icon-xs" aria-hidden strokeWidth={2} />;
+  return <CircleHelp className="icon-xs" aria-hidden strokeWidth={2} />;
 }
 
 function EvidenceView({ lang, result, onBack }: { lang: Lang; result: CheckResult; onBack: () => void }) {
@@ -1368,20 +1373,11 @@ function TimelineItem({ step }: { step: TraceStep }) {
   const provider = step.provider === "tavily" ? "tavily" : step.provider === "rules" ? "rules" : "nemotron";
   return (
     <li className="tl-item">
-      <span className={`model-avatar ${provider === "tavily" ? "model-avatar--tavily" : provider === "rules" ? "model-avatar--app" : "model-avatar--nemotron"}`}>
-        {provider === "tavily" ? (
-          <Search className="icon-sm" aria-hidden strokeWidth={2} />
-        ) : provider === "rules" ? (
-          <ShieldCheck className="icon-sm" aria-hidden strokeWidth={2} />
-        ) : (
-          <MessageSquareText className="icon-sm" aria-hidden strokeWidth={2} />
-        )}
-      </span>
       <div className="flex items-center justify-between gap-2">
         <p className="t-label">{step.label || step.title}</p>
         <span className="latency">{step.status === "skipped" ? "Not called" : step.model === "scamcheck-rules" ? "No AI" : (step.ms ?? 0) >= 20 ? formatMs(step.ms ?? step.durationMs) : "Sample"}</span>
       </div>
-      <p className="t-small t-muted">{modelShortName(step.model)}</p>
+      <p className={`model ${provider === "tavily" ? "model--tavily" : provider === "nemotron" ? "model--nemotron" : ""}`}>{modelShortName(step.model)}</p>
       <div className="card mt-3 p-3">
         <dl className="io">
           {step.input ? (

@@ -20,7 +20,7 @@ export default function RadarPage() {
           Counts mix a small sample set with checks run on this server. A phone number is stored as a mask and a hash. The message itself is not kept. This is not a national feed.
         </p>
         <div className="cluster">
-          <a className="btn btn-accent btn-md" href={OFFICIAL_CONTACTS.csaHref}>
+          <a className="btn btn-primary btn-md" href={OFFICIAL_CONTACTS.csaHref}>
             Call CSA 292
           </a>
           <a className="btn btn-secondary btn-md" href={`sms:292?body=${encodeURIComponent("I want to report a mobile money scam.")}`}>

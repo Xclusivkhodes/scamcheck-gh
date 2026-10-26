@@ -21,7 +21,17 @@ const QUIZ = [
 ];
 
 const STREAK_KEY = "scamcheck-streak";
+const WEEK_KEY = "scamcheck-streak-week";
 const STREAK_EVENT = "scamcheck-streak";
+
+function isoWeek(date: Date): string {
+  const utc = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = utc.getUTCDay() || 7;
+  utc.setUTCDate(utc.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(utc.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((utc.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  return `${utc.getUTCFullYear()}-W${week}`;
+}
 
 function subscribeStreak(onStoreChange: () => void) {
   window.addEventListener(STREAK_EVENT, onStoreChange);
@@ -44,8 +54,12 @@ export function DigestDesk({
   function finish() {
     const correct = QUIZ.filter((item, index) => picked[index] === item.answer).length;
     const previous = Number(localStorage.getItem(STREAK_KEY) || "0");
-    const next = correct === QUIZ.length ? previous + 1 : 0;
+    const week = isoWeek(new Date());
+    const previousWeek = localStorage.getItem(WEEK_KEY);
+    const next = correct === QUIZ.length ? (previousWeek === week ? previous : previous + 1) : 0;
     localStorage.setItem(STREAK_KEY, String(next));
+    if (correct === QUIZ.length) localStorage.setItem(WEEK_KEY, week);
+    else localStorage.removeItem(WEEK_KEY);
     window.dispatchEvent(new Event(STREAK_EVENT));
     setDone(true);
   }
@@ -55,7 +69,7 @@ export function DigestDesk({
       <p className="t-overline t-muted">This week</p>
       <h1 className="t-h1">Three scams to watch</h1>
       <p>
-        A WhatsApp digest needs a Meta business number, so this page is the version you can use today. The counts include sample rows until people check messages on this server.
+        A WhatsApp digest needs a Meta business number, so this page is the version you can open today. Come back next week: a full score once in a week keeps the streak. The counts include sample rows until people check messages on this server.
       </p>
       <ol className="card overflow-hidden">
         {trends.map((row) => (
@@ -72,7 +86,7 @@ export function DigestDesk({
         ))}
       </ol>
       <h2 className="t-h2">Spot the scam</h2>
-      <p>Thirty seconds. A full score keeps a streak on this phone. Streak on this phone: {streak}.</p>
+      <p>Thirty seconds. A full score once this week keeps a streak on this phone. Streak on this phone: {streak}.</p>
       {QUIZ.map((item, index) => (
         <fieldset className="card p-5" key={item.prompt}>
           <legend className="t-label">{item.prompt}</legend>
@@ -95,7 +109,7 @@ export function DigestDesk({
       <button type="button" className="btn btn-primary btn-md" disabled={picked.some((value) => value < 0)} onClick={finish}>
         Check my answers
       </button>
-      {done ? <p role="status">Streak on this phone: {streak}.</p> : null}
+      {done ? <p role="status">Streak on this phone: {streak}. Come back next week to keep it.</p> : null}
     </article>
   );
 }

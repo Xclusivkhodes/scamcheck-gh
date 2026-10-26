@@ -22,6 +22,9 @@ export default defineConfig({
     timeout: 120_000,
     env: {
       DEMO_MODE: "true",
+      RATE_LIMIT_PER_MINUTE: "1000",
+      RATE_LIMIT_PER_DAY: "10000",
+      PIPELINE_CONCURRENCY: "8",
     },
   },
   projects: [

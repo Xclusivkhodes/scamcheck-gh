@@ -1,50 +1,48 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
-
-interface Relative {
-  id: string;
-  name: string;
-}
-
-const KEY = "scamcheck-family";
-const EVENT = "scamcheck-family";
-
-function subscribe(onStoreChange: () => void) {
-  window.addEventListener(EVENT, onStoreChange);
-  return () => window.removeEventListener(EVENT, onStoreChange);
-}
-
-function snapshot() {
-  return localStorage.getItem(KEY) || "[]";
-}
-
-function parsePeople(raw: string): Relative[] {
-  try {
-    const saved = JSON.parse(raw) as Relative[];
-    if (!Array.isArray(saved)) return [];
-    return saved.filter((person) => person?.name && person?.id);
-  } catch {
-    return [];
-  }
-}
+import { useState, useSyncExternalStore } from "react";
+import { cardQuery } from "@/lib/card";
+import { verdictWord } from "@/lib/copy";
+import {
+  ensureFamilyCode,
+  FAMILY_ALERTS_KEY,
+  FAMILY_CODE_KEY,
+  FAMILY_EVENT,
+  FAMILY_KEY,
+  familyAlertsSnapshot,
+  familyCodeSnapshot,
+  familySnapshot,
+  readLocalAlerts,
+  readPeople,
+  subscribeFamily,
+  type Relative,
+} from "@/lib/family-local";
 
 export function FamilyDesk() {
-  const raw = useSyncExternalStore(subscribe, snapshot, () => "[]");
-  const people = parsePeople(raw);
+  const people = readPeople(useSyncExternalStore(subscribeFamily, familySnapshot, () => "[]"));
+  const code = useSyncExternalStore(subscribeFamily, familyCodeSnapshot, () => "");
+  const alerts = readLocalAlerts(useSyncExternalStore(subscribeFamily, familyAlertsSnapshot, () => "[]"));
+  const [copied, setCopied] = useState(false);
 
   function save(next: Relative[]) {
-    localStorage.setItem(KEY, JSON.stringify(next));
-    window.dispatchEvent(new Event(EVENT));
+    localStorage.setItem(FAMILY_KEY, JSON.stringify(next));
+    if (next.length > 0) ensureFamilyCode();
+    if (next.length === 0) {
+      localStorage.removeItem(FAMILY_CODE_KEY);
+      localStorage.removeItem(FAMILY_ALERTS_KEY);
+    }
+    window.dispatchEvent(new Event(FAMILY_EVENT));
   }
+
+  const watchPath = code ? `/family/watch?code=${code}` : "";
 
   return (
     <article className="prose">
       <p className="t-overline t-muted">Check for Mum</p>
       <h1 className="t-h1">Send a card, not the message</h1>
       <p>
-        Link a relative on this phone. When a check is Scam or Caution, you can forward a card with the band and the next step. The card does not include the full message, and ScamCheck does not read your contacts.
+        Link a relative on this phone. When a check is Scam or Caution, an alert is kept here and on a watch link you can send once. The alert has the band and the pattern, not the message. ScamCheck does not read your contacts, and it cannot push a notification to another phone.
       </p>
       <form
         className="card p-5"
@@ -72,7 +70,7 @@ export function FamilyDesk() {
               <span className="action-num">{person.name.slice(0, 1).toUpperCase()}</span>
               <div>
                 <p className="action-title">{person.name}</p>
-                <p className="t-muted mt-1">Alerts stay on this phone until you send a card.</p>
+                <p className="t-muted mt-1">High-risk checks on this phone show up below, then you can forward the card.</p>
                 <button type="button" className="btn btn-ghost mt-2" onClick={() => save(people.filter((item) => item.id !== person.id))}>
                   Remove
                 </button>
@@ -81,8 +79,64 @@ export function FamilyDesk() {
           ))}
         </ul>
       ) : (
-        <p>No one is linked yet. Add Mum, then check a message and choose Send a card to Mum.</p>
+        <p>No one is linked yet. Add Mum, then check a message. A Scam or Caution result can open a card.</p>
       )}
+      {watchPath ? (
+        <section className="card p-5" aria-labelledby="watch-heading">
+          <h2 id="watch-heading" className="t-h3">
+            Watch link
+          </h2>
+          <p className="t-muted mt-2">Anyone with this link can see the band and the pattern. They cannot see the message. Send it once, to the person you linked.</p>
+          <p className="mt-3">
+            <Link className="text-link" href={watchPath}>
+              {watchPath}
+            </Link>
+          </p>
+          <button
+            type="button"
+            className="btn btn-secondary btn-md mt-3"
+            onClick={() => {
+              const absolute = `${window.location.origin}${watchPath}`;
+              void navigator.clipboard.writeText(absolute).then(
+                () => setCopied(true),
+                () => setCopied(false),
+              );
+            }}
+          >
+            {copied ? "Copied" : "Copy watch link"}
+          </button>
+        </section>
+      ) : null}
+      <section aria-labelledby="alerts-heading">
+        <h2 id="alerts-heading" className="t-h2">
+          Alerts on this phone
+        </h2>
+        {alerts.length > 0 ? (
+          <ul className="card overflow-hidden">
+            {alerts.map((alert) => (
+              <li className="action" key={alert.id}>
+                <span className="action-num">{verdictWord(alert.verdict, "en").slice(0, 1)}</span>
+                <div>
+                  <p className="action-title">
+                    {verdictWord(alert.verdict, "en")} · {alert.pattern}
+                  </p>
+                  <p className="t-muted mt-1">
+                    For {alert.name}. {alert.headline}
+                  </p>
+                  <Link
+                    className="btn btn-secondary btn-md mt-2"
+                    href={cardQuery({ verdict: alert.verdict, headline: alert.headline, pattern: alert.pattern, lang: "en" })}
+                  >
+                    Open the card
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No high-risk checks yet. A Safe result does not raise an alert.</p>
+        )}
+      </section>
       <p>
         <Link className="btn btn-secondary btn-md" href="/">
           Check a message

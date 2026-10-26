@@ -12,6 +12,7 @@ const pages = [
   { path: "/shield", name: "Checks on this phone" },
   { path: "/digest", name: "Three scams to watch" },
   { path: "/ussd", name: "USSD is not a public short code yet" },
+  { path: "/family/watch", name: "Alerts for this watch link" },
 ];
 
 for (const item of pages) {
@@ -51,6 +52,58 @@ test("digest quiz can be finished", async ({ page }) => {
   await page.getByRole("button", { name: "No. Use a GRA office or gra.gov.gh" }).click();
   await page.getByRole("button", { name: "Check my answers" }).click();
   await expect(page.getByRole("status")).toContainText("Streak on this phone: 1");
+});
+
+test("a sample scam shows pattern matches and radar counts", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Sent by mistake" }).click();
+  await expect(page.getByRole("heading", { name: "Scam" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Matches" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /024 ••• 456 was reported \d+ times/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Not a scam" })).toBeVisible();
+});
+
+test("not a scam is remembered for an official alert and does not clear a PIN request", async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Real MTN alert" }).click();
+  await expect(page.getByRole("heading", { name: "Looks safe" })).toBeVisible();
+  await page.getByRole("button", { name: "Not a scam" }).click();
+  await expect(page.getByRole("status").filter({ hasText: /official alert/i })).toBeVisible();
+  await page.getByRole("button", { name: "Check another message" }).click();
+  await page.getByRole("button", { name: "Real MTN alert" }).click();
+  await expect(page.getByRole("heading", { name: "Looks safe" })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: /official alert/i })).toBeVisible();
+  await page.getByRole("button", { name: "Check another message" }).click();
+  await page.getByLabel("Paste the message").fill("MTN agent: send your PIN 4821 now to reverse GHS 800 to 0551988776.");
+  await page.getByRole("button", { name: "Check message" }).click();
+  await expect(page.getByRole("heading", { name: "Scam" })).toBeVisible();
+  await expect(page.getByText("That note does not apply here")).toHaveCount(0);
+});
+
+test("linking Mum creates a watch link and does not require the message", async ({ page }) => {
+  await page.goto("/family");
+  await page.getByRole("button", { name: "Link on this phone" }).click();
+  await expect(page.getByRole("link", { name: /\/family\/watch\?code=/ })).toBeVisible();
+  await expect(page.getByText("No high-risk checks yet")).toBeVisible();
+});
+
+test("family watch rejects a pasted message", async ({ request }) => {
+  const code = "abc23456";
+  const denied = await request.post("/api/family", {
+    data: { code, verdict: "scam", pattern: "Fake wrong transfer", text: "Send your PIN 4821" },
+  });
+  expect(denied.status()).toBe(400);
+  const saved = await request.post("/api/family", {
+    data: { code, verdict: "scam", pattern: "Fake wrong transfer" },
+  });
+  expect(saved.ok()).toBeTruthy();
+  const body = (await saved.json()) as { alert: { pattern: string; verdict: string } };
+  expect(body.alert).toEqual({ verdict: "scam", pattern: "Fake wrong transfer", at: expect.any(String) });
+  const listed = await request.get(`/api/family?code=${code}`);
+  const list = (await listed.json()) as { alerts: Array<{ pattern: string }> };
+  expect(list.alerts.some((alert) => alert.pattern === "Fake wrong transfer")).toBe(true);
+  expect(JSON.stringify(list)).not.toContain("4821");
 });
 
 test("shield starts empty", async ({ page }) => {

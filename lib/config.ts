@@ -19,7 +19,7 @@ export function models() {
   return {
     vision: allowedModel(process.env.NEBIUS_MODEL_VISION, DEFAULT_MODELS.vision),
     classify: allowedModel(process.env.NEBIUS_MODEL_CLASSIFY, DEFAULT_MODELS.classify),
-    verdict: MODEL_IDS.nano,
+    verdict: allowedModel(process.env.NEBIUS_MODEL_VERDICT, DEFAULT_MODELS.verdict),
   };
 }
 

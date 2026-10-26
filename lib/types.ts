@@ -2,7 +2,7 @@ export type Lang = "en" | "tw";
 
 export type Verdict = "scam" | "suspicious" | "looks_ok" | "unsure";
 
-export type CheckMode = "demo" | "live";
+export type CheckMode = "demo" | "live" | "fallback";
 
 export type ScamPattern =
   | "fake_reversal"
@@ -89,6 +89,10 @@ export interface CheckResult {
   cacheHit?: boolean;
   precheck?: PrecheckReport;
   patternMatch?: PatternMatch | null;
+  /** Nearest cards, best first. At most three. */
+  patternMatches?: PatternMatch[];
+  /** Prior radar counts for numbers and hosts in this message. The message is not included. */
+  radarHits?: RadarHit[];
   route?: RoutePlan;
   consistency?: ConsistencyReport;
   grounding?: GroundingReport;
@@ -135,6 +139,12 @@ export interface PatternMatch {
   source: string;
   year: number;
   pattern: ScamPattern;
+}
+
+export interface RadarHit {
+  kind: "number" | "link";
+  label: string;
+  count: number;
 }
 
 export interface RoutePlan {
