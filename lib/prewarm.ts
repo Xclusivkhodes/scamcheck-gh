@@ -27,8 +27,8 @@ export function prewarmExamples(): void {
       result.cacheHit = true;
       result.demoNote =
         lang === "tw"
-          ? "Nhwɛso a yɛakora so. Yɛanfrɛ model biara."
-          : "Cached example. No model call.";
+          ? "DEMO MODE. Nhwɛso a yɛakora so. Yɛanfrɛ model biara."
+          : "DEMO MODE. Cached example. No model call.";
       byText.set(textKey(example.text, lang), result);
       byId.set(`${example.id}:${lang}`, result);
     }

@@ -1,4 +1,5 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
+import { mkdir, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { MODEL_IDS } from "./budget";
 
@@ -63,15 +64,24 @@ function load(): void {
   }
 }
 
+let saveChain: Promise<void> = Promise.resolve();
+
+/** Atomic rename, queued off the request path. Free hosts wipe this file on restart. */
 function save(): void {
   if (!shouldPersist()) return;
-  try {
-    const file = spendPath();
-    mkdirSync(path.dirname(file), { recursive: true });
-    writeFileSync(file, JSON.stringify(state, null, 2));
-  } catch (error) {
-    console.error("spend file was not saved", error instanceof Error ? error.name : "error");
-  }
+  const snapshot = JSON.stringify(state, null, 2);
+  const file = spendPath();
+  saveChain = saveChain
+    .then(async () => {
+      const dir = path.dirname(file);
+      await mkdir(dir, { recursive: true });
+      const tmp = `${file}.${process.pid}.tmp`;
+      await writeFile(tmp, snapshot);
+      await rename(tmp, file);
+    })
+    .catch((error: unknown) => {
+      console.error("spend file was not saved", error instanceof Error ? error.name : "error");
+    });
 }
 
 export function budgetUsd(): number {

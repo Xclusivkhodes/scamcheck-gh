@@ -10,13 +10,12 @@ export function resetLimits(): void {
   inFlight = 0;
 }
 
-export function clientIp(headers: Headers | Record<string, string | string[] | undefined>, socketIp: string): string {
-  const trust = process.env.TRUST_PROXY === "true";
-  if (trust) {
-    const raw = header(headers, "x-forwarded-for");
-    if (raw) return raw.split(",")[0]?.trim() || socketIp || "unknown";
-  }
-  return socketIp || "unknown";
+export function clientIp(headers: Headers | Record<string, string | string[] | undefined>, socketIp = ""): string {
+  const trust = process.env.TRUST_PROXY === "1" || process.env.TRUST_PROXY === "true";
+  if (!trust) return socketIp || "direct";
+  const raw = header(headers, "x-forwarded-for");
+  const parts = raw.split(",").map((part) => part.trim()).filter(Boolean);
+  return parts[parts.length - 1] || socketIp || "direct";
 }
 
 export function allowIp(ip: string, now = Date.now()): { ok: true } | { ok: false; error: string } {
@@ -34,6 +33,8 @@ export function allowIp(ip: string, now = Date.now()): { ok: true } | { ok: fals
   day.push(now);
   minuteHits.set(ip, minute);
   dayHits.set(ip, day);
+  evict(minuteHits, now, 60_000);
+  evict(dayHits, now, 24 * 60 * 60 * 1000);
   return { ok: true };
 }
 
@@ -73,6 +74,16 @@ function cap(name: string, fallback: number): number {
 
 function prune(store: Map<string, number[]>, ip: string, now: number, windowMs: number): number[] {
   return (store.get(ip) ?? []).filter((stamp) => now - stamp < windowMs);
+}
+
+/** Drop idle keys so the maps cannot grow for every address that ever called. */
+function evict(store: Map<string, number[]>, now: number, windowMs: number): void {
+  if (store.size < 2000) return;
+  for (const [key, stamps] of store) {
+    const fresh = stamps.filter((stamp) => now - stamp < windowMs);
+    if (fresh.length === 0) store.delete(key);
+    else store.set(key, fresh);
+  }
 }
 
 function header(headers: Headers | Record<string, string | string[] | undefined>, name: string): string {

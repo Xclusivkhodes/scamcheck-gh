@@ -5,20 +5,24 @@ Order is what to do next, not a calendar. Live model spend stays off until someo
 ## 1. Prove the bar that is still unmeasured
 
 - Run Lighthouse on the production server (`npm run build && npm start`) for `/`, `/about`, `/privacy`, and `/disclaimer`. Performance, accessibility, best practices, and SEO each need 90 or better. Fix what fails. Record the scores in [FEATURES.md](FEATURES.md).
-- Save light and dark screenshots at 360, 768, and 1440 under `docs/screenshots/` for the home page, a Scam result, Radar, and the family card.
+- Light and dark screenshots at 360, 768, and 1440 are in `docs/screenshots/` for the home page and a Scam result (v2 indigo, no kente). Radar, family, and Shield are at 390.
 - Confirm a GitHub Actions run of `.github/workflows/android-apk.yml` and `.github/workflows/web.yml` is green. This machine cannot compile the APK.
 
 ## 2. Close detection gaps that do not need a vendor
 
+Done 26 Oct 2026. Tests cover each one.
+
 - Show `reportsForPhone` on the verdict when a number in the message is already on the radar.
 - Return the nearest three pattern cards, not only the best one, and show them as “matches”.
-- Redact PIN-like and OTP-like strings before any live prompt is built. Keep the demo path free of network calls.
-- Add a “Not a scam” control that stays on the device and is visible the next time a similar official alert is checked. Do not let it silence a PIN request.
+- Redact PIN-like and OTP-like strings before any live prompt is built. Phone numbers stay. The demo path makes no network calls.
+- Add a “Not a scam” control that stays on the device and is visible the next time a similar official alert is checked. It does not silence a PIN request or a Scam band.
+
+A high-risk check can also raise a family alert. The watch link stores the band and the pattern title. It does not push a notification, and it does not store the message.
 
 ## 3. Live models, only after a budget OK
 
 - Set `DEMO_MODE=false` with `NEBIUS_API_KEY` and `TAVILY_API_KEY` on the host, not in git.
-- Run one short message, read `/api/health`, and confirm the trace shows Lightning then Nano and that Ultra is absent.
+- Run one short message, read `/api/readyz` (`mode` is `live`, `llm` is `ok`), and confirm the trace shows Lightning then Nano and that Ultra is absent. `/api/health` uses that same short shape and does not list model ids.
 - Re-score a slice of `evals/dataset.ts` through `POST /api/check`. Publish precision and recall next to the offline 96.7%. Keep the two known gaps unless a live model beats them without new false alarms.
 - Optional: `SCAMCHECK_RDAP=1` and `SAFE_BROWSING_API_KEY`.
 

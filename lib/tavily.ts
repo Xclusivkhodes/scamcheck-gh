@@ -97,7 +97,7 @@ async function postSearch(body: Record<string, unknown>): Promise<Response> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(20_000),
+    signal: AbortSignal.timeout(3_000),
   });
 }
 

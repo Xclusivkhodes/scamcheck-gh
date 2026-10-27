@@ -31,7 +31,7 @@ test("theme follows the system until someone chooses", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto("/");
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", /.+/);
-  await expect.poll(() => page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe("rgb(15, 15, 17)");
+  await expect.poll(() => page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe("rgb(12, 12, 14)");
   await page.getByRole("button", { name: /Switch/ }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await expect.poll(() => page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe("rgb(250, 250, 250)");

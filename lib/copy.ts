@@ -185,8 +185,13 @@ export function confidenceWords(confidence: number, lang: Lang): string {
   if (confidence >= 90) return "Very sure";
   if (confidence >= 75) return "Sure";
   if (confidence >= 60) return "Fairly sure";
-  if (confidence >= 40) return "A bit sure";
   return "Not sure";
+}
+
+/** Verdict panel only. "Safe" stays the band name everywhere else. */
+export function verdictPanelWord(verdict: Verdict, lang: Lang): string {
+  if (lang === "en" && verdict === "looks_ok") return "Looks safe";
+  return verdictWord(verdict, lang);
 }
 
 export function verdictWord(verdict: Verdict, lang: Lang): string {

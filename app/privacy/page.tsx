@@ -20,7 +20,7 @@ export default function PrivacyPage() {
         </p>
         <h2 className="t-h2">Live mode</h2>
         <p>
-          When live mode is on, the message is sent to Nebius Token Factory so a Nemotron model can read it. Short search phrases are sent to Tavily. We do not write the message to disk and we do not sell it.
+          When live mode is on, the message is sent to Nebius Token Factory so a Nemotron model can read it. PIN, OTP, password, and Ghana Card values are replaced with “[redacted]” before that prompt is built. Phone numbers in the message stay, because they are what the check is about. Short search phrases are sent to Tavily. We do not write the message to disk and we do not sell it.
         </p>
         <p>
           A repeat of the same check can reuse the model’s answer from memory for 15 minutes, then it is dropped. That is why the app does not say “Not stored”. It says “Not saved to disk”.
@@ -30,7 +30,8 @@ export default function PrivacyPage() {
           <li>If you are offline, the message waits in this browser’s local storage until you are back online. It stays on your device.</li>
           <li>A photo is resized in the browser before it is sent. You can type the words instead.</li>
           <li>We do not run an account system, and we do not keep the message you pasted.</li>
-          <li>Family names for Check for Mum stay in this browser. The shared card leaves out the full message.</li>
+          <li>Family names, the “Not a scam” note, and alerts on this phone stay in this browser. A watch link stores only the band and the pattern title, not the message. Anyone with that link can see those alerts.</li>
+          <li>The shared card leaves out the full message.</li>
           <li>Scam Radar may keep a masked number, a hash, and the pattern. It does not keep the message.</li>
           <li>My Shield keeps past checks in this browser only.</li>
           <li>The website does not read your contacts or your SMS inbox. The Android companion can read SMS only after you allow it, and it keeps the text on the phone unless you tap Check with AI.</li>
