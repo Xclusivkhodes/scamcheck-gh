@@ -96,8 +96,10 @@ object Store {
 
 object Prefs {
     private const val NAME = "scamcheck"
+    /** The public demo server. It runs in sample mode and holds no key in this app. */
+    const val DEFAULT_BASE_URL = "https://scamcheck-gh.vercel.app"
     fun baseUrl(context: Context): String =
-        context.getSharedPreferences(NAME, Context.MODE_PRIVATE).getString("base_url", "").orEmpty()
+        context.getSharedPreferences(NAME, Context.MODE_PRIVATE).getString("base_url", DEFAULT_BASE_URL).orEmpty()
 
     fun setBaseUrl(context: Context, url: String) {
         context.getSharedPreferences(NAME, Context.MODE_PRIVATE).edit().putString("base_url", url.trim().trimEnd('/')).apply()

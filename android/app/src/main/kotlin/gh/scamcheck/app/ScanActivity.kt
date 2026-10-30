@@ -18,7 +18,7 @@ class ScanActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(48, 48, 48, 48)
+            setPadding(dp(20), dp(20), dp(20), dp(20))
         }
         root.addView(heading("Recent messages"))
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
@@ -35,7 +35,7 @@ class ScanActivity : AppCompatActivity() {
                 root.addView(paragraph(row.body.take(140)))
             }
         }
-        setContentView(ScrollView(this).apply { addView(root) })
+        setEdgeToEdgeContent(ScrollView(this).apply { addView(root) })
     }
 
     private fun readInbox(): List<InboxRow> {
@@ -60,19 +60,19 @@ class ScanActivity : AppCompatActivity() {
     private fun heading(text: String) = TextView(this).apply {
         this.text = text
         textSize = 28f
-        setPadding(0, 0, 0, 24)
+        setPadding(0, 0, 0, dp(12))
     }
 
     private fun paragraph(text: String) = TextView(this).apply {
         this.text = text
         textSize = 16f
-        setPadding(0, 0, 0, 16)
+        setPadding(0, 0, 0, dp(8))
     }
 
     private fun button(label: String, onClick: () -> Unit) = MaterialButton(this).apply {
         text = label
         isAllCaps = false
-        minimumHeight = 132
+        minimumHeight = dp(56)
         setOnClickListener { onClick() }
     }
 }

@@ -16,15 +16,17 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+      # The action's default package list includes the retired "tools" package,
+      # which makes sdkmanager exit 1. Name the packages the build needs instead.
       - uses: android-actions/setup-android@v3
-      - name: Install SDK packages
-        run: sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
+        with:
+          packages: "platform-tools platforms;android-35 build-tools;35.0.0"
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.11.1"
       - name: Test the on-device classifier and build the debug APK
         working-directory: android
-        run: gradle :classifier:test :app:assembleDebug --no-daemon
+        run: gradle :classifier:test :app:assembleDebug :app:lintDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: scamcheck-debug-apk

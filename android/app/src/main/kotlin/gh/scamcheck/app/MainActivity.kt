@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private fun refresh() {
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(48, 48, 48, 48)
+            setPadding(dp(20), dp(20), dp(20), dp(20))
             setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.bg))
         }
         root.addView(title("ScamCheck GH"))
@@ -52,9 +52,9 @@ class MainActivity : AppCompatActivity() {
         root.addView(button(getString(R.string.paste_check)) {
             startActivity(Intent(this, ResultActivity::class.java).putExtra("paste", true))
         })
-        root.addView(button(getString(R.string.settings)) { startActivity(Intent(this, SettingsActivity::class.java)) })
-        root.addView(button(getString(R.string.privacy)) { startActivity(Intent(this, PrivacyActivity::class.java)) })
-        setContentView(ScrollView(this).apply { addView(root) })
+        root.addView(button(getString(R.string.settings), primary = false) { startActivity(Intent(this, SettingsActivity::class.java)) })
+        root.addView(button(getString(R.string.privacy), primary = false) { startActivity(Intent(this, PrivacyActivity::class.java)) })
+        setEdgeToEdgeContent(ScrollView(this).apply { addView(root) })
     }
 
     private fun smsGranted(): Boolean {
@@ -67,24 +67,27 @@ class MainActivity : AppCompatActivity() {
         this.text = text
         textSize = 32f
         setTextColor(ContextCompat.getColor(this@MainActivity, R.color.text))
-        setPadding(0, 0, 0, 24)
+        setPadding(0, 0, 0, dp(12))
     }
 
     private fun body(text: String) = TextView(this).apply {
         this.text = text
         textSize = 18f
         setTextColor(ContextCompat.getColor(this@MainActivity, R.color.muted))
-        setPadding(0, 0, 0, 24)
+        setPadding(0, 0, 0, dp(12))
     }
 
-    private fun button(label: String, onClick: () -> Unit) = MaterialButton(this).apply {
+    private fun button(label: String, primary: Boolean = true, onClick: () -> Unit) = (
+        if (primary) MaterialButton(this)
+        else MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle)
+    ).apply {
         text = label
         textSize = 16f
         isAllCaps = false
-        minimumHeight = 144
+        minimumHeight = dp(56)
         setOnClickListener { onClick() }
         val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        params.bottomMargin = 24
+        params.bottomMargin = dp(12)
         layoutParams = params
     }
 }
