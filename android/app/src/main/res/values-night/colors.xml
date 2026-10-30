@@ -8,4 +8,7 @@
     <color name="on_primary">#11183B</color>
     <color name="accent">#F0AE2E</color>
     <color name="line">#27272A</color>
+    <color name="band_scam">#F97066</color>
+    <color name="band_caution">#FDB022</color>
+    <color name="band_safe">#47CD89</color>
 </resources>

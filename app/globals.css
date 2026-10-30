@@ -1,4 +1,14 @@
 @import "tailwindcss/utilities.css";
+
+/* Tailwind is loaded without its default theme, so name the scale the
+   utilities use. Without --spacing, mt-4, p-4, gap-3 and friends are never
+   generated and cards lose their padding on a phone. 4px matches tokens.css. */
+@theme {
+  --spacing: 4px;
+  --radius-lg: 16px;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+}
 @import "@fontsource-variable/bricolage-grotesque/wght.css";
 @import "@fontsource-variable/atkinson-hyperlegible-next/wght.css";
 @import "@fontsource-variable/atkinson-hyperlegible-mono/wght.css";

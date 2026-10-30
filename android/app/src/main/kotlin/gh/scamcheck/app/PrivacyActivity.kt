@@ -9,7 +9,7 @@ class PrivacyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val text = TextView(this).apply {
-            setPadding(48, 48, 48, 48)
+            setPadding(dp(20), dp(20), dp(20), dp(20))
             textSize = 18f
             this.text = """
                 Privacy notice
@@ -27,6 +27,6 @@ class PrivacyActivity : AppCompatActivity() {
                 Twi is not generated in this app.
             """.trimIndent()
         }
-        setContentView(ScrollView(this).apply { addView(text) })
+        setEdgeToEdgeContent(ScrollView(this).apply { addView(text) })
     }
 }

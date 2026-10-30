@@ -119,7 +119,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </div>
       <footer className="site-footer t-small">
         <p>ScamCheck GH gives advice, not a guarantee. If you are unsure, call your network on 100 before you send anything.</p>
-        <p className="cluster mt-3">
+        <nav className="footer-links mt-3" aria-label="More">
           <Link className="text-link" href="/about">
             How it works
           </Link>
@@ -147,7 +147,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <Link className="text-link" href="/disclaimer">
             Disclaimer
           </Link>
-        </p>
+        </nav>
         <p className="mt-3">Not affiliated with MTN, Telecel, AT, the Cyber Security Authority, or the Ghana Police.</p>
       </footer>
     </div>

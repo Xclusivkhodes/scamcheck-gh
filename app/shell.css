@@ -270,3 +270,19 @@ img { max-width: 100%; height: auto; }
 @media (prefers-reduced-motion: reduce) {
   .caret::after, .spin { animation: none; }
 }
+
+/* ---------- Mobile polish ---------- */
+/* Footer links: a two-column grid of 44px rows on a phone, a wrapped row on wider screens. */
+.footer-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; }
+.footer-links .text-link { display: flex; align-items: center; min-height: var(--size-tap-min); min-width: var(--size-tap-min); }
+@media (min-width: 640px) {
+  .footer-links { display: flex; flex-wrap: wrap; column-gap: 20px; }
+}
+
+/* Language switch: 44px buttons. */
+.seg button { height: var(--size-tap-min); min-width: var(--size-tap-min); }
+
+/* Example chips scroll sideways in one line instead of squashing their labels. */
+.scroll-x > .chip { flex: none; white-space: nowrap; }
+.scroll-x { scroll-snap-type: x proximity; overscroll-behavior-x: contain; margin-inline: calc(var(--space-4) * -1); padding-inline: var(--space-4); scroll-padding-inline: var(--space-4); }
+.scroll-x > * { scroll-snap-align: start; }
