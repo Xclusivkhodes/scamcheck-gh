@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { mkdir, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { MODEL_IDS } from "./budget";
+import { aiCapReachedSync, aiSpendCapUsd, lastKnownAiSpendUsd } from "./ai-spend-cap";
 
 /**
  * Catalog list prices in USD per 1,000,000 tokens, read from the Token Factory
@@ -84,9 +85,9 @@ function save(): void {
     });
 }
 
+/** The hard AI spend cap (AI_SPEND_CAP_USD, default $0.30). BUDGET_USD can only lower it. */
 export function budgetUsd(): number {
-  const value = Number(process.env.BUDGET_USD);
-  return Number.isFinite(value) && value > 0 ? value : 1;
+  return aiSpendCapUsd();
 }
 
 function ratio(name: string, fallback: number): number {
@@ -100,12 +101,12 @@ export function softLimitUsd(): number {
 }
 
 export function hardLimitUsd(): number {
-  return budgetUsd() * ratio("BUDGET_HARD_RATIO", 0.9);
+  return budgetUsd() * ratio("BUDGET_HARD_RATIO", 1);
 }
 
 export function estimatedUsd(): number {
   load();
-  return state.estimatedUsd;
+  return Math.max(state.estimatedUsd, lastKnownAiSpendUsd());
 }
 
 export function softTripped(): boolean {
@@ -113,7 +114,7 @@ export function softTripped(): boolean {
 }
 
 export function hardTripped(): boolean {
-  return estimatedUsd() >= hardLimitUsd();
+  return estimatedUsd() >= hardLimitUsd() || aiCapReachedSync();
 }
 
 export function llmEnabled(): boolean {

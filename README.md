@@ -24,7 +24,7 @@ npm run e2e       # Playwright, sample mode, port 4317
 npm run build && npm start
 ```
 
-Copy `.env.example` to `.env` only when you mean to leave sample mode. Set `DEMO_MODE=false` only after the API budget is accepted. You need `NEBIUS_API_KEY` and `TAVILY_API_KEY`. Do not commit `.env`.
+Copy `.env.example` to `.env` only when you mean to leave sample mode. Set `DEMO_MODE=false` only after the API budget is accepted. You need `NEBIUS_API_KEY` and `TAVILY_API_KEY`. Do not commit `.env`. Live AI has a hard spend cap (`AI_SPEND_CAP_USD`, default $0.30). At the cap, checks fall back to the on-device rules with a clear note. See [docs/AI_SPEND_CAP.md](docs/AI_SPEND_CAP.md).
 
 On 26 Oct 2026: unit tests 39 passed, eval 59/61 (96.7%), Playwright 25 passed, typecheck, lint, and the production build passed. `npm run typecheck` runs `next typegen` first, because Next.js 16 route helpers are generated and `next-env.d.ts` is gitignored. Lighthouse has not been measured yet. Live Nebius and Tavily stay off unless `DEMO_MODE=false` and the keys are set on the host.
 

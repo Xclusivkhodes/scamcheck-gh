@@ -25,7 +25,7 @@ Live mode also expects `RADAR_SALT` (at least 16 characters) so phone hashes are
 1. New Web Service → Docker, or apply the blueprint.
 2. The image listens on `PORT` (Render sets this). Local and the Dockerfile default to `4317` when `PORT` is unset.
 3. Set `NEXT_PUBLIC_SITE_URL` in the dashboard. `DEMO_MODE` is already `true` in the blueprint.
-4. The free plan’s disk is ephemeral. The spend ledger (`data/spend.json`) and live Scam Radar counts (`data/radar.json`) are written with a temp file and rename, and both disappear when the disk resets. On a free host, set `LLM_ENABLED=false` or keep `DEMO_MODE=true` so a restart cannot spend an unbounded budget. A durable ledger needs something like Turso or Upstash, which this repo does not ship. My Shield and family names stay in the browser, so they are unaffected. Sample radar counts stay in source and still show in demo mode.
+4. The free plan’s disk is ephemeral. The spend ledger (`data/spend.json`) and live Scam Radar counts (`data/radar.json`) are written with a temp file and rename, and both disappear when the disk resets. On a free host, set `LLM_ENABLED=false` or keep `DEMO_MODE=true` so a restart cannot spend an unbounded budget. The hard AI spend cap (`AI_SPEND_CAP_USD`, default $0.30, see [AI_SPEND_CAP.md](AI_SPEND_CAP.md)) keeps its running total in Upstash Redis when `UPSTASH_REDIS_REST_URL`/`KV_REST_API_URL` is set. That is the durable option on Vercel and on free hosts. My Shield and family names stay in the browser, so they are unaffected. Sample radar counts stay in source and still show in demo mode.
 
 ## Hugging Face Docker Space
 

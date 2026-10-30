@@ -1,13 +1,14 @@
 import { TokenLedger } from "./budget";
 import { breakerOpen } from "./breaker";
 import { hasNebiusKey, hasTavilyKey, isDemoMode, models } from "./config";
+import { aiSpendSnapshot, CAP_STORE_MISSING_MESSAGE } from "./ai-spend-cap";
 import { patternLabel } from "./copy";
 import { mergeEntities } from "./entities";
 import { CheckError } from "./errors";
 import { TEXT_LIMIT } from "./limits";
 import { exampleById } from "./examples";
 import { analyzeMessage } from "./heuristics";
-import { nebiusChat, nebiusJson, type ChatReply } from "./nebius";
+import { nebiusChat, nebiusJson, spendCapError, type ChatReply } from "./nebius";
 import { finalizeCheck } from "./finalize";
 import { presentDemo, fallbackFromAnalysis } from "./present";
 import { cachedExample } from "./prewarm";
@@ -74,8 +75,9 @@ export async function runCheck(input: CheckRequest): Promise<CheckResult> {
   try {
     return finalizeCheck(await executeCheck(input));
   } catch (error) {
-    if (!(error instanceof CheckError) || (error.code !== "breaker_open" && error.code !== "DEADLINE")) throw error;
+    if (!(error instanceof CheckError) || (error.code !== "breaker_open" && error.code !== "DEADLINE" && error.code !== "spend_cap")) throw error;
     if (isDemoMode()) throw error;
+    const capped = error.code === "spend_cap";
     const lang: Lang = input.language === "tw" ? "tw" : "en";
     const text = (input.text ?? "").trim().slice(0, TEXT_LIMIT) || "message";
     const demo = presentDemo(analyzeMessage(text), text, lang, {
@@ -86,7 +88,9 @@ export async function runCheck(input: CheckRequest): Promise<CheckResult> {
     return {
       ...demo,
       mode: "fallback",
-      demoNote: "The live check is paused. This answer used the on-device rules.",
+      demoNote: capped
+        ? `${error.message} This answer used the on-device rules.`
+        : "The live check is paused. This answer used the on-device rules.",
     };
   }
 }
@@ -136,6 +140,11 @@ async function executeCheck(input: CheckRequest): Promise<CheckResult> {
 
   if (!hasNebiusKey()) {
     throw new CheckError(503, "Live mode needs NEBIUS_API_KEY. Set DEMO_MODE=true to use sample checks.", "BUDGET_PAUSED");
+  }
+  {
+    const cap = await aiSpendSnapshot();
+    if (cap.capReached) throw spendCapError();
+    if (!cap.liveAllowedByStore) throw spendCapError(CAP_STORE_MISSING_MESSAGE);
   }
 
   return runLive(typed, image, lang, Boolean(input.skipSearch) || !hasTavilyKey());
@@ -427,7 +436,7 @@ async function sampleConsistency(model: string, text: string, ledger: TokenLedge
           ],
         }, sampleSchema);
       } catch (error) {
-        if (error instanceof CheckError && (error.code === "breaker_open" || error.code === "DEADLINE")) throw error;
+        if (error instanceof CheckError && (error.code === "breaker_open" || error.code === "DEADLINE" || error.code === "spend_cap")) throw error;
         return null;
       }
     }),
@@ -566,7 +575,7 @@ function emitTrace(result: CheckResult): CheckResult {
 }
 
 function rethrowLiveStop(error: unknown): void {
-  if (error instanceof CheckError && (error.code === "breaker_open" || error.code === "DEADLINE")) throw error;
+  if (error instanceof CheckError && (error.code === "breaker_open" || error.code === "DEADLINE" || error.code === "spend_cap")) throw error;
 }
 
 function validateImage(dataUrl: string): void {
