@@ -8,6 +8,7 @@ import { messageText, parseModelJson } from "./json";
 import { logLlm } from "./observe";
 import { currentContext } from "./request-context";
 import { hardTripped, llmEnabled, priceFor, recordUsage, type Usage } from "./spend";
+import { aiCapReachedSync, CAP_REACHED_MESSAGE, estimatePromptTokens, reserveSpend, settleSpend, SpendCapError, type Reservation } from "./ai-spend-cap";
 import type { z } from "zod";
 
 export interface ChatMessage {
@@ -127,8 +128,17 @@ async function fetchWithRetry(options: ChatOptions, body: Record<string, unknown
       throw new CheckError(429, "Too many live checks right now. Try an example.", "RATE_LIMITED");
     }
     const started = Date.now();
+    // Hard cap: reserve this attempt's worst case before it is sent. Refused calls never reach Nebius.
+    const reservation = await reserveOrStop(body);
     try {
-      const result = await postChat(body, callSignal(options));
+      let result: Awaited<ReturnType<typeof postChat>>;
+      try {
+        result = await postChat(body, callSignal(options), reservation);
+      } catch (error) {
+        // Timeout or network error: the request may have been billed, so keep the worst case.
+        await settleSpend(reservation, null);
+        throw error;
+      }
       if (result.ok) {
         noteBreakerSuccess();
         logLlm(llmEntry(options, attempt + 1, Date.now() - started, result.reply.usage, "ok", false));
@@ -167,9 +177,42 @@ async function fetchWithRetry(options: ChatOptions, body: Record<string, unknown
   throw lastError ?? new CheckError(502, "Nebius Token Factory could not complete this step.", "LLM_UNAVAILABLE");
 }
 
+/** Thrown when the AI spend cap is used up. runCheck turns it into a rules-only answer. */
+export function spendCapError(message = CAP_REACHED_MESSAGE): CheckError {
+  return new CheckError(503, message, "spend_cap");
+}
+
+async function reserveOrStop(body: Record<string, unknown>): Promise<Reservation> {
+  try {
+    return await reserveSpend(String(body.model), promptTokens(body.messages), Number(body.max_tokens));
+  } catch (error) {
+    if (error instanceof SpendCapError) throw spendCapError(error.message);
+    throw error;
+  }
+}
+
+function promptTokens(messages: unknown): number {
+  let text = "";
+  let images = 0;
+  for (const message of Array.isArray(messages) ? messages : []) {
+    const content = (message as { content?: unknown }).content;
+    if (typeof content === "string") {
+      text += content;
+      continue;
+    }
+    for (const part of Array.isArray(content) ? content : []) {
+      const item = part as { type?: string; text?: unknown };
+      if (item.type === "image_url") images += 1;
+      else if (typeof item.text === "string") text += item.text;
+    }
+  }
+  return estimatePromptTokens(text, images);
+}
+
 async function postChat(
   body: Record<string, unknown>,
   signal: AbortSignal,
+  reservation: Reservation,
 ): Promise<{ ok: true; reply: StoredReply } | { ok: false; status: number; retryAfterMs: number | null }> {
   const response = await fetch(`${nebiusBaseUrl()}/chat/completions`, {
     method: "POST",
@@ -181,6 +224,8 @@ async function postChat(
     signal,
   });
   if (!response.ok) {
+    // Nebius refused the request, so no tokens were generated.
+    await settleSpend(reservation, { promptTokens: 0, completionTokens: 0 });
     return { ok: false, status: response.status, retryAfterMs: retryAfter(response) };
   }
 
@@ -190,9 +235,12 @@ async function postChat(
   };
   const message = payload.choices?.[0]?.message;
   const reasoning = typeof message?.reasoning_content === "string" ? message.reasoning_content.trim() : "";
-  const content = resolveContent(messageText(message?.content), reasoning, Number(body.max_tokens));
-  const usage = readUsage(payload.usage, body, content);
+  // Count the spend before anything below can throw (an empty answer is still billed).
+  const rawText = messageText(message?.content);
+  const usage = readUsage(payload.usage, body, rawText + reasoning);
+  await settleSpend(reservation, usage.estimated ? null : usage);
   recordUsage(String(body.model), usage);
+  const content = resolveContent(rawText, reasoning, Number(body.max_tokens));
   return {
     ok: true,
     reply: { content, reasoning: reasoning || undefined, maxTokens: Number(body.max_tokens), usage },
@@ -310,7 +358,8 @@ function readUsage(
   const promptChars = JSON.stringify(body.messages ?? "").length;
   return {
     promptTokens: Math.ceil(promptChars / 4),
-    completionTokens: Math.ceil(content.length / 4),
+    // No usage field: assume the whole max_tokens was used, so we over-count rather than under-count.
+    completionTokens: Math.max(Math.ceil(content.length / 3), Number(body.max_tokens) || 0),
     estimated: true,
   };
 }
@@ -343,6 +392,7 @@ function assertModelCallAllowed(model: string): void {
   if (isUltra(model)) {
     throw new CheckError(503, "Ultra is not on the live path.", "BUDGET_PAUSED");
   }
+  if (!isDemoMode() && llmEnabled() && aiCapReachedSync()) throw spendCapError();
   if (isDemoMode() || !llmEnabled() || hardTripped()) {
     throw new CheckError(503, "Live model calls are paused.", "BUDGET_PAUSED");
   }
